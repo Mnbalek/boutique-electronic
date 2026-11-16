@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Link, Route, Switch, useLocation, useParams } from 'wouter';
 import {
   useGetHome, useGetCategories, useGetProducts, useGetProduct, useGetCurrentUser,
@@ -234,6 +235,7 @@ function ProductPage({ add }: { add: (p: Product, quantity?: number) => void }) 
 
 function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
   const [,setLocation]=useLocation();
+  const queryClient=useQueryClient();
   const reg=useRegister(); const login=useLogin(); const merge=useMergeCart();
   const forgot=useRequestPasswordReset(); const reset=useResetPassword();
   const {jeton=''}=useParams<{jeton:string}>();
@@ -244,8 +246,13 @@ function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
     if(mode==='register'||mode==='login'){
       if(mode==='register'&&form.password!==form.confirm){setError('Les mots de passe ne correspondent pas.');return;}
       const mutation=mode==='register'?reg:login;
-      const data=mode==='register'?{email:form.email,password:form.password,firstName:form.firstName,lastName:form.lastName,phone:form.phone}:{email:form.email,password:form.password};
-      mutation.mutate({data} as never,{onSuccess:()=>{const guest=readGuest();const items=Object.values(guest).map(({productId,quantity,lastSeenPriceFCFA})=>({productId,quantity,lastSeenPriceFCFA}));if(items.length)merge.mutate({data:{items}} as never);saveGuest({});setLocation('/compte');},onError:(err)=>setError((err as Error).message||'Vérifiez les informations saisies.')});
+      let phoneDigits=form.phone.replace(/\D/g,'');
+      if(phoneDigits.startsWith('00'))phoneDigits=phoneDigits.slice(2);
+      if(phoneDigits.startsWith('229'))phoneDigits=phoneDigits.slice(3);
+      if(mode==='register'&&phoneDigits.length===8)phoneDigits='01'+phoneDigits;
+      if(mode==='register'&&!/^01\d{8}$/.test(phoneDigits)){setError('Saisissez un numéro béninois à 10 chiffres (01 suivi de 8 chiffres), ou un ancien numéro à 8 chiffres.');return;}
+      const data=mode==='register'?{email:form.email,password:form.password,firstName:form.firstName,lastName:form.lastName,phone:'+229'+phoneDigits}:{email:form.email,password:form.password};
+      mutation.mutate({data} as never,{onSuccess:(result)=>{queryClient.setQueryData(getGetCurrentUserQueryKey(),result);const guest=readGuest();const items=Object.values(guest).map(({productId,quantity,lastSeenPriceFCFA})=>({productId,quantity,lastSeenPriceFCFA}));if(items.length)merge.mutate({data:{items}} as never);saveGuest({});setLocation('/compte');},onError:(err)=>setError((err as Error).message||'Vérifiez les informations saisies.')});
     } else if(mode==='forgot') forgot.mutate({data:{email:form.email}},{onSuccess:()=>setSuccess('Si cette adresse correspond à un compte, une instruction de réinitialisation est disponible dans cette démonstration.'),onError:()=>setError('La demande n’a pas pu être traitée. Réessayez.')});
     else reset.mutate({data:{token:jeton,password:form.password}},{onSuccess:()=>{setSuccess('Le mot de passe a été mis à jour pour la démonstration.');setTimeout(()=>setLocation('/connexion'),1200);},onError:()=>setError('Le lien est invalide ou expiré.')});
   };
@@ -255,7 +262,7 @@ function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
     <form onSubmit={submit} className="p-5 sm:p-9"><p className="eyebrow">Boutik Bénin</p><h1 className="font-display text-2xl font-semibold">{title}</h1><p className="mt-2 text-sm text-slate-600">{mode==='register'?'Vos informations servent à gérer vos commandes.':mode==='login'?'Connectez-vous pour retrouver votre espace.':demoNotice}</p>
        {(mode==='register')&&<div className="mt-6 grid gap-4 sm:grid-cols-2"><label className="form-label">Prénom<input autoComplete="given-name" required value={form.firstName} onChange={e=>setForm({...form,firstName:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-first-name"/></label><label className="form-label">Nom<input autoComplete="family-name" required value={form.lastName} onChange={e=>setForm({...form,lastName:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-last-name"/></label></div>}
        <label className="form-label mt-5 block">Adresse e-mail<input autoComplete="email" required type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-email"/></label>
-       {mode==='register'&&<label className="form-label mt-4 block">Téléphone<input autoComplete="tel" required type="tel" pattern="01[0-9]{8}" placeholder="01 90 00 00 00" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value.replace(/\s/g,'')})} className="input input-bordered mt-1 w-full" data-testid="input-phone"/><span className="mt-1 block text-xs text-slate-600">Indicatif +229, suivi de 8 chiffres.</span></label>}
+       {mode==='register'&&<label className="form-label mt-4 block">Téléphone<input autoComplete="tel" required type="tel" placeholder="01 90 00 00 00 ou +229 01 90 00 00 00" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value.replace(/[^\d+]/g,'')})} className="input input-bordered mt-1 w-full" data-testid="input-phone"/><span className="mt-1 block text-xs text-slate-600">Saisissez le numéro national ou international ; l’indicatif et le préfixe sont normalisés automatiquement.</span></label>}
        {(mode==='register'||mode==='login'||mode==='reset')&&<label className="form-label mt-4 block">Mot de passe<input autoComplete={mode==='login'?'current-password':'new-password'} required minLength={8} type="password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-password"/></label>}
        {(mode==='register'||mode==='reset')&&<label className="form-label mt-4 block">Confirmer le mot de passe<input autoComplete="new-password" required minLength={8} type="password" value={form.confirm} onChange={e=>setForm({...form,confirm:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-password-confirm"/></label>}
       {error&&<p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-900" data-testid="status-auth-error">{error}</p>}{success&&<p role="status" className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900" data-testid="status-auth-success">{success}</p>}

@@ -1,14 +1,17 @@
 import { defineConfig } from "drizzle-kit";
-import path from "path";
+import { dirname, join } from "node:path";
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL, ensure the database is provisioned");
-}
+const configDirectory = dirname(fileURLToPath(import.meta.url));
+const localEnvPath = join(configDirectory, "../../.env");
+if (existsSync(localEnvPath)) process.loadEnvFile(localEnvPath);
 
 export default defineConfig({
-  schema: path.join(__dirname, "./src/schema/index.ts"),
+  schema: `${join(configDirectory, "src/schema").replaceAll("\\", "/")}/*.ts`,
   dialect: "postgresql",
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    // A URL is only needed by push/migrate. Schema generation is offline.
+    url: process.env.DATABASE_URL ?? "postgres://localhost/boutik_benin",
   },
 });

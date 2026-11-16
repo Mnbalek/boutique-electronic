@@ -1,0 +1,48 @@
+
+Tu reprends le projet existant « Boutik Bénin » à partir de son état actuel. Ne repars pas de zéro et ne remplace pas sa structure.
+
+## Source de vérité
+Lis le cahier des charges v1.2 joint au projet, ainsi que `PROJECT_STATUS.md` et `replit.md`. Le cahier des charges est la référence fonctionnelle. Respecte aussi la règle du projet : avancer phase par phase et attendre ma validation avant de passer à la suivante.
+
+## État actuel vérifié
+- L’application React/Vite et les trois workflows du projet démarrent. Les dépendances sont déjà installées.
+- `pnpm run typecheck` passe.
+- L’aperçu présente une boutique de démonstration avec 48 produits, 6 catégories principales et 12 sous-catégories.
+- Les lectures de l’accueil et du catalogue utilisent des réponses MSW de démonstration, uniquement en développement. Ce n’est pas une API métier ni une boutique fonctionnelle.
+- Le serveur API Express ne fournit actuellement que `/api/healthz`.
+- Le schéma Drizzle est vide : aucune persistance ni migration métier n’est en place.
+- Les écrans client existent en partie, mais les comptes, adresses, paniers connectés, commandes, paiements et notifications ne sont pas fonctionnels côté serveur. L’espace d’administration et ses routes `/admin/*` n’existent pas.
+- Un défaut du panier invité reste à traiter : il conserve un identifiant produit alors que la route de fiche produit attend un slug.
+- Neon, Kkiapay, Cloudinary et un fournisseur d’e-mails ne sont pas configurés.
+- Le cahier recommande Netlify Functions/Hono, tandis que le workspace contient un service Express Replit. Ne remplace pas cette architecture sans me présenter l’écart et obtenir mon accord.
+
+L’aperçu actuel est disponible ici :
+https://3030bd6d-3240-4752-a02a-83597150765c-00-2zm958gs8fk5x.kirk.replit.dev/
+
+## Travail déjà réalisé
+- Restauration des dépendances et démarrage des trois workflows.
+- Mise en place de lectures de démonstration pour rendre l’aperçu visuel consultable.
+- Correction de la recherche avec paramètres d’URL et sans sensibilité aux accents.
+- Pagination du catalogue réglée à 24 articles par défaut.
+- Correction de `lang="fr"`, du zoom mobile et des couleurs de texte des boutons.
+- Rapport d’état créé dans `PROJECT_STATUS.md`.
+
+Ne refais pas ces changements sans avoir constaté un problème actuel.
+
+## Règles produit à respecter
+- Interface en français, vouvoiement, montants entiers en FCFA et dates en `Africa/Porto-Novo`.
+- Boutique généraliste destinée au Bénin, exploitée par un administrateur unique.
+- Pas de commande invitée, de paiement à la livraison, de retrait en magasin, de variantes produit ni de remboursements réels.
+- Les données de démonstration ne doivent jamais être présentées comme des données commerciales réelles.
+- Les prix, réductions, frais et stocks faisant autorité doivent être calculés côté serveur.
+- Respecte les règles de sécurité, les transitions d’état, l’idempotence et les critères de recette du cahier des charges.
+- Ne migre pas vers Replit Database et ne change pas de stack ou d’architecture sans mon accord.
+- Ne demande ni n’invente de secrets. Si une connexion externe est requise, vérifie d’abord les intégrations disponibles et utilise le flux de secrets Replit.
+
+## Prochaine étape
+La phase visuelle n’a pas encore reçu ma validation. Commence par me demander si l’aperçu actuel est validé ou s’il faut des ajustements. N’entame pas la phase suivante avant ma réponse.
+
+Après validation, prends comme prochaine tranche le vrai catalogue public : modèles Drizzle et migrations, données de démonstration réinitialisables, routes OpenAPI pour l’accueil, les catégories, la recherche, les filtres, le tri, la pagination et la fiche produit. Garde les contrats existants cohérents; relance le codegen après tout changement OpenAPI. Ne retire les mocks de développement qu’une fois les routes réelles vérifiées.
+
+Avant de modifier le code, vérifie l’état courant du dépôt et relis les fichiers concernés. À la fin de chaque phase, exécute les contrôles adaptés, vérifie l’aperçu sur ordinateur et mobile, mets à jour `PROJECT_STATUS.md` et attends ma validation avant la phase suivante. Ne publie pas l’application sans mon accord.
+```

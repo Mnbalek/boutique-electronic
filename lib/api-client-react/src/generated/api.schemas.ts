@@ -208,7 +208,7 @@ export interface RegisterInput {
      * @maxLength 100
      */
   lastName: string;
-  /** @pattern ^\+229[0-9]{8}$ */
+  /** @pattern ^\+229[0-9]{10}$ */
   phone: string;
 }
 
@@ -246,7 +246,7 @@ export interface ProfileUpdate {
      * @maxLength 100
      */
   lastName?: string;
-  /** @pattern ^\+229[0-9]{8}$ */
+  /** @pattern ^\+229[0-9]{10}$ */
   phone?: string;
 }
 
@@ -292,7 +292,7 @@ export interface AddressInput {
      * @maxLength 120
      */
   recipient: string;
-  /** @pattern ^\+229[0-9]{8}$ */
+  /** @pattern ^\+229[0-9]{10}$ */
   phone: string;
   departmentId: string;
   communeId: string;

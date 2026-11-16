@@ -1,0 +1,17 @@
+[build]
+command = "pnpm --filter @workspace/boutik-benin run build"
+publish = "artifacts/boutik-benin/dist/public"
+functions = "netlify/functions"
+
+[build.environment]
+NODE_VERSION = "22"
+
+[dev]
+command = "pnpm --filter @workspace/boutik-benin run dev"
+targetPort = 5173
+port = 8888
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200

@@ -17,7 +17,7 @@ export interface AddressInput {
      * @maxLength 120
      */
   recipient: string;
-  /** @pattern ^\+229[0-9]{8}$ */
+  /** @pattern ^\+229[0-9]{10}$ */
   phone: string;
   departmentId: string;
   communeId: string;

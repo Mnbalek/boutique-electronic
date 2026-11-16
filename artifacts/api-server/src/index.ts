@@ -1,25 +1,19 @@
-import app from "./app";
-import { logger } from "./lib/logger";
+import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { serve } from "@hono/node-server";
 
-const rawPort = process.env["PORT"];
+const localEnvPath = fileURLToPath(new URL("../../../.env", import.meta.url));
+if (existsSync(localEnvPath)) process.loadEnvFile(localEnvPath);
+const { default: app } = await import("./app");
 
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
+const port = Number(process.env["PORT"] ?? 8080);
+
+if (!Number.isInteger(port) || port <= 0) {
+  throw new Error(`Invalid PORT value: "${port}"`);
+}
+
+serve({ fetch: app.fetch, port, hostname: "127.0.0.1" }, (info) => {
+  console.info(
+    `API development server listening on http://127.0.0.1:${info.port}`,
   );
-}
-
-const port = Number(rawPort);
-
-if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
-}
-
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
-    process.exit(1);
-  }
-
-  logger.info({ port }, "Server listening");
 });

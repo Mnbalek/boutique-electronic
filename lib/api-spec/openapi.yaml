@@ -844,7 +844,7 @@ components:
         password: { type: string, minLength: 8, maxLength: 128 }
         firstName: { type: string, minLength: 1, maxLength: 100 }
         lastName: { type: string, minLength: 1, maxLength: 100 }
-        phone: { type: string, pattern: "^\\+229[0-9]{8}$" }
+        phone: { type: string, pattern: "^\\+229[0-9]{10}$" }
       required: [email, password, firstName, lastName, phone]
     LoginInput:
       type: object
@@ -868,7 +868,7 @@ components:
       properties:
         firstName: { type: string, minLength: 1, maxLength: 100 }
         lastName: { type: string, minLength: 1, maxLength: 100 }
-        phone: { type: string, pattern: "^\\+229[0-9]{8}$" }
+        phone: { type: string, pattern: "^\\+229[0-9]{10}$" }
       minProperties: 1
     UserResponse:
       type: object
@@ -910,7 +910,7 @@ components:
       properties:
         label: { type: string, minLength: 1, maxLength: 80 }
         recipient: { type: string, minLength: 1, maxLength: 120 }
-        phone: { type: string, pattern: "^\\+229[0-9]{8}$" }
+        phone: { type: string, pattern: "^\\+229[0-9]{10}$" }
         departmentId: { type: string, format: uuid }
         communeId: { type: string, format: uuid }
         neighborhood: { type: string, minLength: 1, maxLength: 120 }

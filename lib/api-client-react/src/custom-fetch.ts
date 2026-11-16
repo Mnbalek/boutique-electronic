@@ -161,7 +161,13 @@ function buildErrorMessage(response: Response, data: unknown): string {
   const message =
     getStringField(data, "message") ??
     getStringField(data, "error_description") ??
-    getStringField(data, "error");
+    getStringField(data, "error") ??
+    getStringField(
+      data && typeof data === "object"
+        ? (data as Record<string, unknown>).error
+        : undefined,
+      "message",
+    );
 
   if (title && detail) return `${prefix}: ${title} — ${detail}`;
   if (detail) return `${prefix}: ${detail}`;

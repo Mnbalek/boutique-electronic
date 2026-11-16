@@ -1,46 +1,38 @@
-# État du projet — cahier des charges v1.2
+# État du projet — audit du 16 novembre 2026
 
-État établi le 16 novembre 2026 à partir du code et de l’aperçu de développement.
+## Référence
 
-## Déjà en place
+Le cahier des charges v1.3 fourni par le propriétaire est la référence fonctionnelle actuelle. Il décrit une boutique pour le Bénin avec catalogue, comptes clients, panier, commandes, promotions, livraison, paiement Kkiapay Sandbox, administration et 46 scénarios de recette.
 
-- Workspace pnpm avec application React/Vite, client API React généré, schémas Zod générés et service Express.
-- Contrat OpenAPI public/client couvrant le catalogue et plusieurs parcours client.
-- Interface française avec accueil, catalogue, fiche produit, connexion/inscription, panier invité, commande, compte, commandes, notifications et pages d’information. Ces écrans ne signifient pas que leurs opérations serveur fonctionnent.
-- Jetons visuels vert/ambre, typographies, composants partagés et états de chargement/erreur.
-- Jeu d’exemples : 48 produits, 6 catégories principales et 12 sous-catégories.
-- Les dépendances manquantes à l’import ont été restaurées; le contrôle TypeScript complet passe.
+## État réel
 
-## Corrigé pendant cette reprise
+- L’application React/Vite fournit une interface de démonstration en français et un catalogue fictif de 48 produits, 6 catégories principales et 12 sous-catégories.
+- MSW simule certaines lectures publiques en développement. Ces réponses ne sont pas persistées et ne constituent pas un backend métier.
+- Le contrat OpenAPI et les clients/types générés couvrent des opérations publiques et client. Hono expose health, catalogue, auth, géographie, panier, adresses, devis checkout, commandes client et devis de livraison; Netlify route `/api/*` vers la fonction Hono.
+- Un schéma Drizzle initial de 29 tables couvre comptes/sessions, géographie, catalogue, commandes/paiements/stock, promotions, annulations/réclamations/remboursements, notifications, emails et audit. La migration initiale est appliquée sur Neon. Les types DB et API passent.
+- Les routes catalogue appliquent filtres, tri, pagination, recherche sans accents et stock disponible après réservations actives. Un seed réexécutable a chargé 21 catégories et 48 produits de démonstration avec leur stock initial et leurs images.
+- Les parcours inscription/connexion/session/logout, panier connecté et CRUD d’adresses ont été vérifiés sur Neon avec un compte temporaire ensuite supprimé.
+- Le référentiel CC BY 4.0 des 12 départements et 77 communes et les 3 zones tarifaires initiales du cahier sont chargés. Les tarifs sont des valeurs de démonstration à confirmer avant exploitation commerciale.
+- Le preview checkout calcule les totaux et promotions côté serveur. La création de commande est idempotente et transactionnelle : vérification prix/stock, verrouillage des produits, snapshot d’adresse/livraison, lignes, réservation, tentative de paiement initiale et historique. Test Neon réussi pour devis Cotonou (1 000 FCFA), création, répétition de même clé, garde d’une commande en attente et liste; les données temporaires ont été supprimées.
+- Le démarrage refuse désormais `PAYMENT_MODE=mock` en production. La confirmation Kkiapay, les transitions de commande après paiement, tâche périodique d’expiration, notifications, anonymisation du compte, administration et reçu restent à implémenter. Aucun écran ni endpoint d’administration n’est présent.
+- La connexion locale de développement utilise Hono sur 8080; Vite transmet `/api` vers ce serveur. En déploiement, Netlify route `/api/*` vers la fonction Hono.
+- Le client DB Neon passe par WebSocket HTTPS (443), car le réseau laissait établir TLS sur le port PostgreSQL mais ne renvoyait pas de réponse SQL. Le driver officiel Neon fonctionne avec la configuration présente; `drizzle-kit migrate` est remplacé par le migrateur Drizzle via ce même transport.
+- Le lockfile a été recalculé et `pnpm install --frozen-lockfile --ignore-scripts` a installé les dépendances. Le build global passe. L’API a retourné HTTP 200 pour health, départements (12), communes (77) et catégories (6); le panier sans session retourne 401.
+- `VITE_USE_DEMO_API=false` désactive MSW. Le build global passe et le catalogue ainsi que les parcours client/checkout décrits ci-dessus ont été vérifiés.
+- Aucun test automatisé de recette n’a été trouvé dans le dépôt lors de l’audit.
 
-- Les workflows ne démarraient pas, car aucun `node_modules` n’était installé. `pnpm install --frozen-lockfile` a rétabli les dépendances.
-- L’accueil et le catalogue restaient en chargement : leurs requêtes pointaient vers des routes API absentes. En développement seulement, les lectures publiques sont maintenant simulées à partir du jeu d’exemples; cela permet de revoir l’interface sans faire croire qu’une vraie boutique existe.
-- Le catalogue demandait 12 articles par page au lieu des 24 prévus par le cahier des charges.
-- Les filtres lisaient les paramètres de recherche depuis le chemin Wouter au lieu de la chaîne de requête. La recherche « eclat » fonctionne maintenant avec le nom accentué « Éclat »; les sélections de nouveautés et de popularité ne répètent plus la même série de produits.
-- Les couleurs de premier plan des boutons DaisyUI n’étaient pas définies par le thème personnalisé; le texte des actions principales a maintenant un contraste adapté.
-- La page HTML utilisait `lang="en"`, bloquait le zoom mobile et contenait encore une description générique de Replit. Ces valeurs ont été corrigées; l’indexation reste désactivée pendant la démonstration.
+## Nettoyage du dépôt
 
-## Blocages importants
+Les fichiers de configuration et métadonnées spécifiques à Replit ont été retirés. Les configurations Vite disposent désormais de ports et chemins par défaut, et le dépôt inclut un guide de démarrage local ainsi qu’un plan par phases. L’historique Git, le code de prototype, les documents fournis et les éléments locaux déjà présents ont été conservés.
 
-- Le serveur API ne répond qu’à `/api/healthz`. Les connexions, paniers connectés, adresses, commandes, paiements, notifications et toutes les opérations d’administration sont absents ou simulés nulle part.
-- Le schéma Drizzle est vide; aucune migration, connexion PostgreSQL ni donnée initialisée n’existe. Les écrans connectés ne peuvent donc pas être considérés comme utilisables.
-- Aucune interface ou route `/admin/*` n’est présente.
-- Le panier invité lit une fiche produit par identifiant alors que la route publique attend un slug; il faut corriger le format stocké avant de valider ce parcours.
-- Le cahier demande un backend Netlify Functions/Hono; le workspace contient un serveur Express. Ne pas remplacer l’architecture sans arbitrage explicite, mais clarifier cette différence avant la mise en production.
-- Kkiapay, le fournisseur d’e-mails et Cloudinary ne sont pas configurés. Aucun paiement, email ni téléversement réel n’est disponible.
+## Décisions déjà prises et points ouverts
 
-## À faire, par ordre de priorité
+1. Architecture retenue conformément au cahier : Netlify Functions + Hono 4 stable + Neon; décision documentée dans l’ADR-001.
+2. La validation visuelle reste ouverte et prioritaire avant la présentation.
+3. Neon est accessible via le transport WebSocket; les migrations et seeds utilisent ce canal. Confirmer les tarifs de démonstration avant production et poursuivre avec Kkiapay Sandbox.
 
-1. Faire valider l’aperçu visuel de la phase actuelle.
-2. Construire la persistance PostgreSQL, les migrations et les données initiales, puis réaliser le parcours catalogue réel.
-3. Ajouter comptes, sessions, adresses et panier persistant avec les règles de sécurité du cahier.
-4. Implémenter commande, réservation atomique du stock, promotions, livraison, paiement Sandbox vérifié et idempotence.
-5. Ajouter l’administration, les notifications, les remboursements simulés, l’audit et les contenus d’accueil administrables.
-6. Compléter les critères de recette RC01–RC46, les tests, le SEO, l’accessibilité, les performances et la documentation d’exploitation.
+## Suite recommandée
 
-## Informations à confirmer avant une exploitation réelle
+Suivre le plan de livraison par phases dans `PLAN_DEVELOPPEMENT.md`. Catalogue, compte client, panier, adresses, zones, preview checkout et création/réservation de commande sont écrits et vérifiés. La prochaine étape est Kkiapay Sandbox et la confirmation sécurisée côté serveur.
 
-- Base de données Neon et environnements de test/préproduction.
-- Choix d’hébergement/API (Replit/Express ou Netlify/Hono) et modalités de déploiement.
-- Documentation et clés de test Kkiapay; fournisseur email et Cloudinary.
-- Tarifs et zones de livraison, conditions commerciales, mentions légales et propriétaire de la boutique.
+Ne pas présenter les données fictives comme des données commerciales et ne pas activer le mode de paiement simulé en production.

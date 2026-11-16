@@ -1,0 +1,3698 @@
+[
+  {
+    "id": "BJ1201",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Abomey",
+      "en": "Abomey",
+      "slug": "abomey-bj1201"
+    },
+    "code": {
+      "id": "BJ1201",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ12",
+      "level": 1,
+      "name": {
+        "local": "Zou",
+        "en": "Zou",
+        "slug": "zou-bj12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ12",
+        "level": 1,
+        "name": {
+          "local": "Zou",
+          "en": "Zou",
+          "slug": "zou-bj12"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 32
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.18",
+      "lon": "1.973"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0301",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Abomey-Calavi",
+      "en": "Abomey-Calavi",
+      "slug": "abomey-calavi-bj0301"
+    },
+    "code": {
+      "id": "BJ0301",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ03",
+      "level": 1,
+      "name": {
+        "local": "Atlantique",
+        "en": "Atlantique",
+        "slug": "atlantique-bj03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ03",
+        "level": 1,
+        "name": {
+          "local": "Atlantique",
+          "en": "Atlantique",
+          "slug": "atlantique-bj03"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 9,
+      "village": 71
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.522",
+      "lon": "2.325"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1101",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Adja-Ouere",
+      "en": "Adja-Ouere",
+      "slug": "adja-ouere-bj1101"
+    },
+    "code": {
+      "id": "BJ1101",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ11",
+      "level": 1,
+      "name": {
+        "local": "Plateau",
+        "en": "Plateau",
+        "slug": "plateau-bj11"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ11",
+        "level": 1,
+        "name": {
+          "local": "Plateau",
+          "en": "Plateau",
+          "slug": "plateau-bj11"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 47
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.015",
+      "lon": "2.595"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1001",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Adjarra",
+      "en": "Adjarra",
+      "slug": "adjarra-bj1001"
+    },
+    "code": {
+      "id": "BJ1001",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ10",
+      "level": 1,
+      "name": {
+        "local": "Oueme",
+        "en": "Oueme",
+        "slug": "oueme-bj10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ10",
+        "level": 1,
+        "name": {
+          "local": "Oueme",
+          "en": "Oueme",
+          "slug": "oueme-bj10"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 48
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.533",
+      "lon": "2.617"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1002",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Adjohoun",
+      "en": "Adjohoun",
+      "slug": "adjohoun-bj1002"
+    },
+    "code": {
+      "id": "BJ1002",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ10",
+      "level": 1,
+      "name": {
+        "local": "Oueme",
+        "en": "Oueme",
+        "slug": "oueme-bj10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ10",
+        "level": 1,
+        "name": {
+          "local": "Oueme",
+          "en": "Oueme",
+          "slug": "oueme-bj10"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 8,
+      "village": 57
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.65",
+      "lon": "2.067"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1202",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Agbangnizoun",
+      "en": "Agbangnizoun",
+      "slug": "agbangnizoun-bj1202"
+    },
+    "code": {
+      "id": "BJ1202",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ12",
+      "level": 1,
+      "name": {
+        "local": "Zou",
+        "en": "Zou",
+        "slug": "zou-bj12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ12",
+        "level": 1,
+        "name": {
+          "local": "Zou",
+          "en": "Zou",
+          "slug": "zou-bj12"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 10,
+      "village": 51
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.076",
+      "lon": "1.962"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1003",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Aguegues",
+      "en": "Aguegues",
+      "slug": "aguegues-bj1003"
+    },
+    "code": {
+      "id": "BJ1003",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ10",
+      "level": 1,
+      "name": {
+        "local": "Oueme",
+        "en": "Oueme",
+        "slug": "oueme-bj10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ10",
+        "level": 1,
+        "name": {
+          "local": "Oueme",
+          "en": "Oueme",
+          "slug": "oueme-bj10"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 3,
+      "village": 21
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.476",
+      "lon": "2.54"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1004",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Akpo-Misserete",
+      "en": "Akpo-Misserete",
+      "slug": "akpo-misserete-bj1004"
+    },
+    "code": {
+      "id": "BJ1004",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ10",
+      "level": 1,
+      "name": {
+        "local": "Oueme",
+        "en": "Oueme",
+        "slug": "oueme-bj10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ10",
+        "level": 1,
+        "name": {
+          "local": "Oueme",
+          "en": "Oueme",
+          "slug": "oueme-bj10"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 4,
+      "village": 34
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.572",
+      "lon": "2.591"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0302",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Allada",
+      "en": "Allada",
+      "slug": "allada-bj0302"
+    },
+    "code": {
+      "id": "BJ0302",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ03",
+      "level": 1,
+      "name": {
+        "local": "Atlantique",
+        "en": "Atlantique",
+        "slug": "atlantique-bj03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ03",
+        "level": 1,
+        "name": {
+          "local": "Atlantique",
+          "en": "Atlantique",
+          "slug": "atlantique-bj03"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 12,
+      "village": 85
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.65",
+      "lon": "2.15"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0601",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Aplahoue",
+      "en": "Aplahoue",
+      "slug": "aplahoue-bj0601"
+    },
+    "code": {
+      "id": "BJ0601",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ06",
+      "level": 1,
+      "name": {
+        "local": "Couffo",
+        "en": "Couffo",
+        "slug": "couffo-bj06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ06",
+        "level": 1,
+        "name": {
+          "local": "Couffo",
+          "en": "Couffo",
+          "slug": "couffo-bj06"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 66
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.192",
+      "lon": "1.732"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0901",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Athieme",
+      "en": "Athieme",
+      "slug": "athieme-bj0901"
+    },
+    "code": {
+      "id": "BJ0901",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ09",
+      "level": 1,
+      "name": {
+        "local": "Mono",
+        "en": "Mono",
+        "slug": "mono-bj09"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ09",
+        "level": 1,
+        "name": {
+          "local": "Mono",
+          "en": "Mono",
+          "slug": "mono-bj09"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 47
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.562",
+      "lon": "1.717"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1005",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Avrankou",
+      "en": "Avrankou",
+      "slug": "avrankou-bj1005"
+    },
+    "code": {
+      "id": "BJ1005",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ10",
+      "level": 1,
+      "name": {
+        "local": "Oueme",
+        "en": "Oueme",
+        "slug": "oueme-bj10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ10",
+        "level": 1,
+        "name": {
+          "local": "Oueme",
+          "en": "Oueme",
+          "slug": "oueme-bj10"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 52
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.565",
+      "lon": "2.652"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0101",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Banikoara",
+      "en": "Banikoara",
+      "slug": "banikoara-bj0101"
+    },
+    "code": {
+      "id": "BJ0101",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ01",
+      "level": 1,
+      "name": {
+        "local": "Alibori",
+        "en": "Alibori",
+        "slug": "alibori-bj01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ01",
+        "level": 1,
+        "name": {
+          "local": "Alibori",
+          "en": "Alibori",
+          "slug": "alibori-bj01"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 10,
+      "village": 69
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "11.3",
+      "lon": "2.433"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0501",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Bante",
+      "en": "Bante",
+      "slug": "bante-bj0501"
+    },
+    "code": {
+      "id": "BJ0501",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ05",
+      "level": 1,
+      "name": {
+        "local": "Collines",
+        "en": "Collines",
+        "slug": "collines-bj05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ05",
+        "level": 1,
+        "name": {
+          "local": "Collines",
+          "en": "Collines",
+          "slug": "collines-bj05"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 9,
+      "village": 34
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "8.347",
+      "lon": "1.865"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0701",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Bassila",
+      "en": "Bassila",
+      "slug": "bassila-bj0701"
+    },
+    "code": {
+      "id": "BJ0701",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ07",
+      "level": 1,
+      "name": {
+        "local": "Donga",
+        "en": "Donga",
+        "slug": "donga-bj07"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ07",
+        "level": 1,
+        "name": {
+          "local": "Donga",
+          "en": "Donga",
+          "slug": "donga-bj07"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 4,
+      "village": 31
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.017",
+      "lon": "1.667"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0401",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Bembereke",
+      "en": "Bembereke",
+      "slug": "bembereke-bj0401"
+    },
+    "code": {
+      "id": "BJ0401",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ04",
+      "level": 1,
+      "name": {
+        "local": "Borgou",
+        "en": "Borgou",
+        "slug": "borgou-bj04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ04",
+        "level": 1,
+        "name": {
+          "local": "Borgou",
+          "en": "Borgou",
+          "slug": "borgou-bj04"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 42
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.243",
+      "lon": "2.748"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1203",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Bohicon",
+      "en": "Bohicon",
+      "slug": "bohicon-bj1203"
+    },
+    "code": {
+      "id": "BJ1203",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ12",
+      "level": 1,
+      "name": {
+        "local": "Zou",
+        "en": "Zou",
+        "slug": "zou-bj12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ12",
+        "level": 1,
+        "name": {
+          "local": "Zou",
+          "en": "Zou",
+          "slug": "zou-bj12"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 9,
+      "village": 51
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.2",
+      "lon": "2.067"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1006",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Bonou",
+      "en": "Bonou",
+      "slug": "bonou-bj1006"
+    },
+    "code": {
+      "id": "BJ1006",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ10",
+      "level": 1,
+      "name": {
+        "local": "Oueme",
+        "en": "Oueme",
+        "slug": "oueme-bj10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ10",
+        "level": 1,
+        "name": {
+          "local": "Oueme",
+          "en": "Oueme",
+          "slug": "oueme-bj10"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 28
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.877",
+      "lon": "2.482"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0902",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Bopa",
+      "en": "Bopa",
+      "slug": "bopa-bj0902"
+    },
+    "code": {
+      "id": "BJ0902",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ09",
+      "level": 1,
+      "name": {
+        "local": "Mono",
+        "en": "Mono",
+        "slug": "mono-bj09"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ09",
+        "level": 1,
+        "name": {
+          "local": "Mono",
+          "en": "Mono",
+          "slug": "mono-bj09"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 60
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.583",
+      "lon": "1.983"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0201",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Boukombe",
+      "en": "Boukombe",
+      "slug": "boukombe-bj0201"
+    },
+    "code": {
+      "id": "BJ0201",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ02",
+      "level": 1,
+      "name": {
+        "local": "Atacora",
+        "en": "Atacora",
+        "slug": "atacora-bj02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ02",
+        "level": 1,
+        "name": {
+          "local": "Atacora",
+          "en": "Atacora",
+          "slug": "atacora-bj02"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 71
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.22",
+      "lon": "1.105"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0903",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Come",
+      "en": "Come",
+      "slug": "come-bj0903"
+    },
+    "code": {
+      "id": "BJ0903",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ09",
+      "level": 1,
+      "name": {
+        "local": "Mono",
+        "en": "Mono",
+        "slug": "mono-bj09"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ09",
+        "level": 1,
+        "name": {
+          "local": "Mono",
+          "en": "Mono",
+          "slug": "mono-bj09"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 38
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.421",
+      "lon": "1.885"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0703",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Copargo",
+      "en": "Copargo",
+      "slug": "copargo-bj0703"
+    },
+    "code": {
+      "id": "BJ0703",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ07",
+      "level": 1,
+      "name": {
+        "local": "Donga",
+        "en": "Donga",
+        "slug": "donga-bj07"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ07",
+        "level": 1,
+        "name": {
+          "local": "Donga",
+          "en": "Donga",
+          "slug": "donga-bj07"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 4,
+      "village": 28
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.838",
+      "lon": "1.548"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0800",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Cotonou",
+      "en": "Cotonou",
+      "slug": "cotonou-bj0800"
+    },
+    "code": {
+      "id": "BJ0800",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ08",
+      "level": 1,
+      "name": {
+        "local": "Littoral",
+        "en": "Littoral",
+        "slug": "littoral-bj08"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ08",
+        "level": 1,
+        "name": {
+          "local": "Littoral",
+          "en": "Littoral",
+          "slug": "littoral-bj08"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 13,
+      "village": 82
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.372",
+      "lon": "2.425"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1204",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Cove",
+      "en": "Cove",
+      "slug": "cove-bj1204"
+    },
+    "code": {
+      "id": "BJ1204",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ12",
+      "level": 1,
+      "name": {
+        "local": "Zou",
+        "en": "Zou",
+        "slug": "zou-bj12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ12",
+        "level": 1,
+        "name": {
+          "local": "Zou",
+          "en": "Zou",
+          "slug": "zou-bj12"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 8,
+      "village": 36
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.322",
+      "lon": "2.286"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1007",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Dangbo",
+      "en": "Dangbo",
+      "slug": "dangbo-bj1007"
+    },
+    "code": {
+      "id": "BJ1007",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ10",
+      "level": 1,
+      "name": {
+        "local": "Oueme",
+        "en": "Oueme",
+        "slug": "oueme-bj10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ10",
+        "level": 1,
+        "name": {
+          "local": "Oueme",
+          "en": "Oueme",
+          "slug": "oueme-bj10"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 45
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.5",
+      "lon": "2.683"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0502",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Dassa-Zoume",
+      "en": "Dassa-Zoume",
+      "slug": "dassa-zoume-bj0502"
+    },
+    "code": {
+      "id": "BJ0502",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ05",
+      "level": 1,
+      "name": {
+        "local": "Collines",
+        "en": "Collines",
+        "slug": "collines-bj05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ05",
+        "level": 1,
+        "name": {
+          "local": "Collines",
+          "en": "Collines",
+          "slug": "collines-bj05"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 10,
+      "village": 64
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.691",
+      "lon": "2.264"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0602",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Djakotomey",
+      "en": "Djakotomey",
+      "slug": "djakotomey-bj0602"
+    },
+    "code": {
+      "id": "BJ0602",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ06",
+      "level": 1,
+      "name": {
+        "local": "Couffo",
+        "en": "Couffo",
+        "slug": "couffo-bj06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ06",
+        "level": 1,
+        "name": {
+          "local": "Couffo",
+          "en": "Couffo",
+          "slug": "couffo-bj06"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 11,
+      "village": 78
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.872",
+      "lon": "1.682"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1205",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Djidja",
+      "en": "Djidja",
+      "slug": "djidja-bj1205"
+    },
+    "code": {
+      "id": "BJ1205",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ12",
+      "level": 1,
+      "name": {
+        "local": "Zou",
+        "en": "Zou",
+        "slug": "zou-bj12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ12",
+        "level": 1,
+        "name": {
+          "local": "Zou",
+          "en": "Zou",
+          "slug": "zou-bj12"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 12,
+      "village": 73
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.333",
+      "lon": "1.933"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0702",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Djougou",
+      "en": "Djougou",
+      "slug": "djougou-bj0702"
+    },
+    "code": {
+      "id": "BJ0702",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ07",
+      "level": 1,
+      "name": {
+        "local": "Donga",
+        "en": "Donga",
+        "slug": "donga-bj07"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ07",
+        "level": 1,
+        "name": {
+          "local": "Donga",
+          "en": "Donga",
+          "slug": "donga-bj07"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 12,
+      "village": 76
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.705",
+      "lon": "1.667"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0603",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Dogbo",
+      "en": "Dogbo",
+      "slug": "dogbo-bj0603"
+    },
+    "code": {
+      "id": "BJ0603",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ06",
+      "level": 1,
+      "name": {
+        "local": "Couffo",
+        "en": "Couffo",
+        "slug": "couffo-bj06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ06",
+        "level": 1,
+        "name": {
+          "local": "Couffo",
+          "en": "Couffo",
+          "slug": "couffo-bj06"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 53
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.817",
+      "lon": "1.783"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0503",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Glazoue",
+      "en": "Glazoue",
+      "slug": "glazoue-bj0503"
+    },
+    "code": {
+      "id": "BJ0503",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ05",
+      "level": 1,
+      "name": {
+        "local": "Collines",
+        "en": "Collines",
+        "slug": "collines-bj05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ05",
+        "level": 1,
+        "name": {
+          "local": "Collines",
+          "en": "Collines",
+          "slug": "collines-bj05"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 10,
+      "village": 44
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "8.164",
+      "lon": "2.238"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0102",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Gogounou",
+      "en": "Gogounou",
+      "slug": "gogounou-bj0102"
+    },
+    "code": {
+      "id": "BJ0102",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ01",
+      "level": 1,
+      "name": {
+        "local": "Alibori",
+        "en": "Alibori",
+        "slug": "alibori-bj01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ01",
+        "level": 1,
+        "name": {
+          "local": "Alibori",
+          "en": "Alibori",
+          "slug": "alibori-bj01"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 34
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.85",
+      "lon": "2.712"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0904",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Grand-Popo",
+      "en": "Grand-Popo",
+      "slug": "grand-popo-bj0904"
+    },
+    "code": {
+      "id": "BJ0904",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ09",
+      "level": 1,
+      "name": {
+        "local": "Mono",
+        "en": "Mono",
+        "slug": "mono-bj09"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ09",
+        "level": 1,
+        "name": {
+          "local": "Mono",
+          "en": "Mono",
+          "slug": "mono-bj09"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 44
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.354",
+      "lon": "1.868"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0905",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Houeyogbe",
+      "en": "Houeyogbe",
+      "slug": "houeyogbe-bj0905"
+    },
+    "code": {
+      "id": "BJ0905",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ09",
+      "level": 1,
+      "name": {
+        "local": "Mono",
+        "en": "Mono",
+        "slug": "mono-bj09"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ09",
+        "level": 1,
+        "name": {
+          "local": "Mono",
+          "en": "Mono",
+          "slug": "mono-bj09"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 66
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.554",
+      "lon": "1.848"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1102",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Ifangni",
+      "en": "Ifangni",
+      "slug": "ifangni-bj1102"
+    },
+    "code": {
+      "id": "BJ1102",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ11",
+      "level": 1,
+      "name": {
+        "local": "Plateau",
+        "en": "Plateau",
+        "slug": "plateau-bj11"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ11",
+        "level": 1,
+        "name": {
+          "local": "Plateau",
+          "en": "Plateau",
+          "slug": "plateau-bj11"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 45
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.638",
+      "lon": "2.699"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0402",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Kalale",
+      "en": "Kalale",
+      "slug": "kalale-bj0402"
+    },
+    "code": {
+      "id": "BJ0402",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ04",
+      "level": 1,
+      "name": {
+        "local": "Borgou",
+        "en": "Borgou",
+        "slug": "borgou-bj04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ04",
+        "level": 1,
+        "name": {
+          "local": "Borgou",
+          "en": "Borgou",
+          "slug": "borgou-bj04"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 43
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.363",
+      "lon": "3.306"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0103",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Kandi",
+      "en": "Kandi",
+      "slug": "kandi-bj0103"
+    },
+    "code": {
+      "id": "BJ0103",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ01",
+      "level": 1,
+      "name": {
+        "local": "Alibori",
+        "en": "Alibori",
+        "slug": "alibori-bj01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ01",
+        "level": 1,
+        "name": {
+          "local": "Alibori",
+          "en": "Alibori",
+          "slug": "alibori-bj01"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 10,
+      "village": 48
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "11.279",
+      "lon": "3.04"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0104",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Karimama",
+      "en": "Karimama",
+      "slug": "karimama-bj0104"
+    },
+    "code": {
+      "id": "BJ0104",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ01",
+      "level": 1,
+      "name": {
+        "local": "Alibori",
+        "en": "Alibori",
+        "slug": "alibori-bj01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ01",
+        "level": 1,
+        "name": {
+          "local": "Alibori",
+          "en": "Alibori",
+          "slug": "alibori-bj01"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 18
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "12.065",
+      "lon": "3.191"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0202",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Kerou",
+      "en": "Kerou",
+      "slug": "kerou-bj0202"
+    },
+    "code": {
+      "id": "BJ0202",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ02",
+      "level": 1,
+      "name": {
+        "local": "Atacora",
+        "en": "Atacora",
+        "slug": "atacora-bj02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ02",
+        "level": 1,
+        "name": {
+          "local": "Atacora",
+          "en": "Atacora",
+          "slug": "atacora-bj02"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 4,
+      "village": 28
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.968",
+      "lon": "2.003"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1103",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Ketou",
+      "en": "Ketou",
+      "slug": "ketou-bj1103"
+    },
+    "code": {
+      "id": "BJ1103",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ11",
+      "level": 1,
+      "name": {
+        "local": "Plateau",
+        "en": "Plateau",
+        "slug": "plateau-bj11"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ11",
+        "level": 1,
+        "name": {
+          "local": "Plateau",
+          "en": "Plateau",
+          "slug": "plateau-bj11"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 38
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.433",
+      "lon": "2.606"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0604",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Klouekanme",
+      "en": "Klouekanme",
+      "slug": "klouekanme-bj0604"
+    },
+    "code": {
+      "id": "BJ0604",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ06",
+      "level": 1,
+      "name": {
+        "local": "Couffo",
+        "en": "Couffo",
+        "slug": "couffo-bj06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ06",
+        "level": 1,
+        "name": {
+          "local": "Couffo",
+          "en": "Couffo",
+          "slug": "couffo-bj06"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 8,
+      "village": 61
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.068",
+      "lon": "1.823"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0203",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Kobli",
+      "en": "Kobli",
+      "slug": "kobli-bj0203"
+    },
+    "code": {
+      "id": "BJ0203",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ02",
+      "level": 1,
+      "name": {
+        "local": "Atacora",
+        "en": "Atacora",
+        "slug": "atacora-bj02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ02",
+        "level": 1,
+        "name": {
+          "local": "Atacora",
+          "en": "Atacora",
+          "slug": "atacora-bj02"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 4,
+      "village": 26
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.486",
+      "lon": "1.009"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0204",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Kouande",
+      "en": "Kouande",
+      "slug": "kouande-bj0204"
+    },
+    "code": {
+      "id": "BJ0204",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ02",
+      "level": 1,
+      "name": {
+        "local": "Atacora",
+        "en": "Atacora",
+        "slug": "atacora-bj02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ02",
+        "level": 1,
+        "name": {
+          "local": "Atacora",
+          "en": "Atacora",
+          "slug": "atacora-bj02"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 51
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.424",
+      "lon": "1.765"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0303",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Kpomasse",
+      "en": "Kpomasse",
+      "slug": "kpomasse-bj0303"
+    },
+    "code": {
+      "id": "BJ0303",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ03",
+      "level": 1,
+      "name": {
+        "local": "Atlantique",
+        "en": "Atlantique",
+        "slug": "atlantique-bj03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ03",
+        "level": 1,
+        "name": {
+          "local": "Atlantique",
+          "en": "Atlantique",
+          "slug": "atlantique-bj03"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 9,
+      "village": 68
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.48",
+      "lon": "2.027"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0605",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Lalo",
+      "en": "Lalo",
+      "slug": "lalo-bj0605"
+    },
+    "code": {
+      "id": "BJ0605",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ06",
+      "level": 1,
+      "name": {
+        "local": "Couffo",
+        "en": "Couffo",
+        "slug": "couffo-bj06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ06",
+        "level": 1,
+        "name": {
+          "local": "Couffo",
+          "en": "Couffo",
+          "slug": "couffo-bj06"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 11,
+      "village": 57
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.917",
+      "lon": "1.883"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0906",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Lokossa",
+      "en": "Lokossa",
+      "slug": "lokossa-bj0906"
+    },
+    "code": {
+      "id": "BJ0906",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ09",
+      "level": 1,
+      "name": {
+        "local": "Mono",
+        "en": "Mono",
+        "slug": "mono-bj09"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ09",
+        "level": 1,
+        "name": {
+          "local": "Mono",
+          "en": "Mono",
+          "slug": "mono-bj09"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 50
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.691",
+      "lon": "1.699"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0105",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Malanville",
+      "en": "Malanville",
+      "slug": "malanville-bj0105"
+    },
+    "code": {
+      "id": "BJ0105",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ01",
+      "level": 1,
+      "name": {
+        "local": "Alibori",
+        "en": "Alibori",
+        "slug": "alibori-bj01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ01",
+        "level": 1,
+        "name": {
+          "local": "Alibori",
+          "en": "Alibori",
+          "slug": "alibori-bj01"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 31
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "11.861",
+      "lon": "3.386"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0205",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Materi",
+      "en": "Materi",
+      "slug": "materi-bj0205"
+    },
+    "code": {
+      "id": "BJ0205",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ02",
+      "level": 1,
+      "name": {
+        "local": "Atacora",
+        "en": "Atacora",
+        "slug": "atacora-bj02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ02",
+        "level": 1,
+        "name": {
+          "local": "Atacora",
+          "en": "Atacora",
+          "slug": "atacora-bj02"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 56
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.815",
+      "lon": "1.058"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0403",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "N'Dali",
+      "en": "N'Dali",
+      "slug": "ndali-bj0403"
+    },
+    "code": {
+      "id": "BJ0403",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ04",
+      "level": 1,
+      "name": {
+        "local": "Borgou",
+        "en": "Borgou",
+        "slug": "borgou-bj04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ04",
+        "level": 1,
+        "name": {
+          "local": "Borgou",
+          "en": "Borgou",
+          "slug": "borgou-bj04"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 19
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.861",
+      "lon": "2.718"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0206",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Natitingou",
+      "en": "Natitingou",
+      "slug": "natitingou-bj0206"
+    },
+    "code": {
+      "id": "BJ0206",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ02",
+      "level": 1,
+      "name": {
+        "local": "Atacora",
+        "en": "Atacora",
+        "slug": "atacora-bj02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ02",
+        "level": 1,
+        "name": {
+          "local": "Atacora",
+          "en": "Atacora",
+          "slug": "atacora-bj02"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 9,
+      "village": 65
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.307",
+      "lon": "1.375"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0404",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Nikki",
+      "en": "Nikki",
+      "slug": "nikki-bj0404"
+    },
+    "code": {
+      "id": "BJ0404",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ04",
+      "level": 1,
+      "name": {
+        "local": "Borgou",
+        "en": "Borgou",
+        "slug": "borgou-bj04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ04",
+        "level": 1,
+        "name": {
+          "local": "Borgou",
+          "en": "Borgou",
+          "slug": "borgou-bj04"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 59
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.934",
+      "lon": "3.204"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0704",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Ouake",
+      "en": "Ouake",
+      "slug": "ouake-bj0704"
+    },
+    "code": {
+      "id": "BJ0704",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ07",
+      "level": 1,
+      "name": {
+        "local": "Donga",
+        "en": "Donga",
+        "slug": "donga-bj07"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ07",
+        "level": 1,
+        "name": {
+          "local": "Donga",
+          "en": "Donga",
+          "slug": "donga-bj07"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 44
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.608",
+      "lon": "1.44"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0504",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Ouesse",
+      "en": "Ouesse",
+      "slug": "ouesse-bj0504"
+    },
+    "code": {
+      "id": "BJ0504",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ05",
+      "level": 1,
+      "name": {
+        "local": "Collines",
+        "en": "Collines",
+        "slug": "collines-bj05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ05",
+        "level": 1,
+        "name": {
+          "local": "Collines",
+          "en": "Collines",
+          "slug": "collines-bj05"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 9,
+      "village": 31
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "8.448",
+      "lon": "2.533"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0304",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Ouidah",
+      "en": "Ouidah",
+      "slug": "ouidah-bj0304"
+    },
+    "code": {
+      "id": "BJ0304",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ03",
+      "level": 1,
+      "name": {
+        "local": "Atlantique",
+        "en": "Atlantique",
+        "slug": "atlantique-bj03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ03",
+        "level": 1,
+        "name": {
+          "local": "Atlantique",
+          "en": "Atlantique",
+          "slug": "atlantique-bj03"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 10,
+      "village": 60
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.367",
+      "lon": "2.083"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1206",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Ouinhi",
+      "en": "Ouinhi",
+      "slug": "ouinhi-bj1206"
+    },
+    "code": {
+      "id": "BJ1206",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ12",
+      "level": 1,
+      "name": {
+        "local": "Zou",
+        "en": "Zou",
+        "slug": "zou-bj12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ12",
+        "level": 1,
+        "name": {
+          "local": "Zou",
+          "en": "Zou",
+          "slug": "zou-bj12"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 4,
+      "village": 37
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.076",
+      "lon": "2.486"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0405",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Parakou",
+      "en": "Parakou",
+      "slug": "parakou-bj0405"
+    },
+    "code": {
+      "id": "BJ0405",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ04",
+      "level": 1,
+      "name": {
+        "local": "Borgou",
+        "en": "Borgou",
+        "slug": "borgou-bj04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ04",
+        "level": 1,
+        "name": {
+          "local": "Borgou",
+          "en": "Borgou",
+          "slug": "borgou-bj04"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 3,
+      "village": 0
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.35",
+      "lon": "2.617"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0207",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Pehunco",
+      "en": "Pehunco",
+      "slug": "pehunco-bj0207"
+    },
+    "code": {
+      "id": "BJ0207",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ02",
+      "level": 1,
+      "name": {
+        "local": "Atacora",
+        "en": "Atacora",
+        "slug": "atacora-bj02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ02",
+        "level": 1,
+        "name": {
+          "local": "Atacora",
+          "en": "Atacora",
+          "slug": "atacora-bj02"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 3,
+      "village": 26
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.289",
+      "lon": "2.037"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0406",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Perere",
+      "en": "Perere",
+      "slug": "perere-bj0406"
+    },
+    "code": {
+      "id": "BJ0406",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ04",
+      "level": 1,
+      "name": {
+        "local": "Borgou",
+        "en": "Borgou",
+        "slug": "borgou-bj04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ04",
+        "level": 1,
+        "name": {
+          "local": "Borgou",
+          "en": "Borgou",
+          "slug": "borgou-bj04"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 35
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.596",
+      "lon": "3.016"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1104",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Pobe",
+      "en": "Pobe",
+      "slug": "pobe-bj1104"
+    },
+    "code": {
+      "id": "BJ1104",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ11",
+      "level": 1,
+      "name": {
+        "local": "Plateau",
+        "en": "Plateau",
+        "slug": "plateau-bj11"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ11",
+        "level": 1,
+        "name": {
+          "local": "Plateau",
+          "en": "Plateau",
+          "slug": "plateau-bj11"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 44
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.08",
+      "lon": "2.673"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1008",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Porto-Novo",
+      "en": "Porto-Novo",
+      "slug": "porto-novo-bj1008"
+    },
+    "code": {
+      "id": "BJ1008",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ10",
+      "level": 1,
+      "name": {
+        "local": "Oueme",
+        "en": "Oueme",
+        "slug": "oueme-bj10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ10",
+        "level": 1,
+        "name": {
+          "local": "Oueme",
+          "en": "Oueme",
+          "slug": "oueme-bj10"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 189
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.483",
+      "lon": "2.617"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1105",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Sakete",
+      "en": "Sakete",
+      "slug": "sakete-bj1105"
+    },
+    "code": {
+      "id": "BJ1105",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ11",
+      "level": 1,
+      "name": {
+        "local": "Plateau",
+        "en": "Plateau",
+        "slug": "plateau-bj11"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ11",
+        "level": 1,
+        "name": {
+          "local": "Plateau",
+          "en": "Plateau",
+          "slug": "plateau-bj11"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 49
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.771",
+      "lon": "2.658"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0505",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Savalou",
+      "en": "Savalou",
+      "slug": "savalou-bj0505"
+    },
+    "code": {
+      "id": "BJ0505",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ05",
+      "level": 1,
+      "name": {
+        "local": "Collines",
+        "en": "Collines",
+        "slug": "collines-bj05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ05",
+        "level": 1,
+        "name": {
+          "local": "Collines",
+          "en": "Collines",
+          "slug": "collines-bj05"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 14,
+      "village": 79
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.885",
+      "lon": "1.866"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0506",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Save",
+      "en": "Save",
+      "slug": "save-bj0506"
+    },
+    "code": {
+      "id": "BJ0506",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ05",
+      "level": 1,
+      "name": {
+        "local": "Collines",
+        "en": "Collines",
+        "slug": "collines-bj05"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ05",
+        "level": 1,
+        "name": {
+          "local": "Collines",
+          "en": "Collines",
+          "slug": "collines-bj05"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 8,
+      "village": 38
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "8.008",
+      "lon": "2.543"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0106",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Segbana",
+      "en": "Segbana",
+      "slug": "segbana-bj0106"
+    },
+    "code": {
+      "id": "BJ0106",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ01",
+      "level": 1,
+      "name": {
+        "local": "Alibori",
+        "en": "Alibori",
+        "slug": "alibori-bj01"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ01",
+        "level": 1,
+        "name": {
+          "local": "Alibori",
+          "en": "Alibori",
+          "slug": "alibori-bj01"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 29
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.969",
+      "lon": "3.504"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1009",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Seme-Kpodji",
+      "en": "Seme-Kpodji",
+      "slug": "seme-kpodji-bj1009"
+    },
+    "code": {
+      "id": "BJ1009",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ10",
+      "level": 1,
+      "name": {
+        "local": "Oueme",
+        "en": "Oueme",
+        "slug": "oueme-bj10"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ10",
+        "level": 1,
+        "name": {
+          "local": "Oueme",
+          "en": "Oueme",
+          "slug": "oueme-bj10"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 29
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.403",
+      "lon": "2.599"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0407",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Sinende",
+      "en": "Sinende",
+      "slug": "sinende-bj0407"
+    },
+    "code": {
+      "id": "BJ0407",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ04",
+      "level": 1,
+      "name": {
+        "local": "Borgou",
+        "en": "Borgou",
+        "slug": "borgou-bj04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ04",
+        "level": 1,
+        "name": {
+          "local": "Borgou",
+          "en": "Borgou",
+          "slug": "borgou-bj04"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 4,
+      "village": 35
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.245",
+      "lon": "2.36"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0305",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "So-Ava",
+      "en": "So-Ava",
+      "slug": "so-ava-bj0305"
+    },
+    "code": {
+      "id": "BJ0305",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ03",
+      "level": 1,
+      "name": {
+        "local": "Atlantique",
+        "en": "Atlantique",
+        "slug": "atlantique-bj03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ03",
+        "level": 1,
+        "name": {
+          "local": "Atlantique",
+          "en": "Atlantique",
+          "slug": "atlantique-bj03"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 42
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.516",
+      "lon": "2.452"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0208",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Tanguieta",
+      "en": "Tanguieta",
+      "slug": "tanguieta-bj0208"
+    },
+    "code": {
+      "id": "BJ0208",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ02",
+      "level": 1,
+      "name": {
+        "local": "Atacora",
+        "en": "Atacora",
+        "slug": "atacora-bj02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ02",
+        "level": 1,
+        "name": {
+          "local": "Atacora",
+          "en": "Atacora",
+          "slug": "atacora-bj02"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 5,
+      "village": 39
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.949",
+      "lon": "1.397"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0408",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Tchaourou",
+      "en": "Tchaourou",
+      "slug": "tchaourou-bj0408"
+    },
+    "code": {
+      "id": "BJ0408",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ04",
+      "level": 1,
+      "name": {
+        "local": "Borgou",
+        "en": "Borgou",
+        "slug": "borgou-bj04"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ04",
+        "level": 1,
+        "name": {
+          "local": "Borgou",
+          "en": "Borgou",
+          "slug": "borgou-bj04"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 36
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.225",
+      "lon": "2.548"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0306",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Toffo",
+      "en": "Toffo",
+      "slug": "toffo-bj0306"
+    },
+    "code": {
+      "id": "BJ0306",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ03",
+      "level": 1,
+      "name": {
+        "local": "Atlantique",
+        "en": "Atlantique",
+        "slug": "atlantique-bj03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ03",
+        "level": 1,
+        "name": {
+          "local": "Atlantique",
+          "en": "Atlantique",
+          "slug": "atlantique-bj03"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 10,
+      "village": 49
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.85",
+      "lon": "2.083"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0307",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Tori-Bossito",
+      "en": "Tori-Bossito",
+      "slug": "tori-bossito-bj0307"
+    },
+    "code": {
+      "id": "BJ0307",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ03",
+      "level": 1,
+      "name": {
+        "local": "Atlantique",
+        "en": "Atlantique",
+        "slug": "atlantique-bj03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ03",
+        "level": 1,
+        "name": {
+          "local": "Atlantique",
+          "en": "Atlantique",
+          "slug": "atlantique-bj03"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 47
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.53",
+      "lon": "2.151"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0209",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Toucountouna",
+      "en": "Toucountouna",
+      "slug": "toucountouna-bj0209"
+    },
+    "code": {
+      "id": "BJ0209",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ02",
+      "level": 1,
+      "name": {
+        "local": "Atacora",
+        "en": "Atacora",
+        "slug": "atacora-bj02"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ02",
+        "level": 1,
+        "name": {
+          "local": "Atacora",
+          "en": "Atacora",
+          "slug": "atacora-bj02"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 3,
+      "village": 22
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.499",
+      "lon": "1.376"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0606",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Toviklin",
+      "en": "Toviklin",
+      "slug": "toviklin-bj0606"
+    },
+    "code": {
+      "id": "BJ0606",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ06",
+      "level": 1,
+      "name": {
+        "local": "Couffo",
+        "en": "Couffo",
+        "slug": "couffo-bj06"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ06",
+        "level": 1,
+        "name": {
+          "local": "Couffo",
+          "en": "Couffo",
+          "slug": "couffo-bj06"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 7,
+      "village": 57
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.9",
+      "lon": "1.815"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1207",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Za-Kpota",
+      "en": "Za-Kpota",
+      "slug": "za-kpota-bj1207"
+    },
+    "code": {
+      "id": "BJ1207",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ12",
+      "level": 1,
+      "name": {
+        "local": "Zou",
+        "en": "Zou",
+        "slug": "zou-bj12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ12",
+        "level": 1,
+        "name": {
+          "local": "Zou",
+          "en": "Zou",
+          "slug": "zou-bj12"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 8,
+      "village": 56
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.232",
+      "lon": "2.186"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1208",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Zagnanado",
+      "en": "Zagnanado",
+      "slug": "zagnanado-bj1208"
+    },
+    "code": {
+      "id": "BJ1208",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ12",
+      "level": 1,
+      "name": {
+        "local": "Zou",
+        "en": "Zou",
+        "slug": "zou-bj12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ12",
+        "level": 1,
+        "name": {
+          "local": "Zou",
+          "en": "Zou",
+          "slug": "zou-bj12"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 6,
+      "village": 34
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.267",
+      "lon": "2.35"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ0308",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Ze",
+      "en": "Ze",
+      "slug": "ze-bj0308"
+    },
+    "code": {
+      "id": "BJ0308",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ03",
+      "level": 1,
+      "name": {
+        "local": "Atlantique",
+        "en": "Atlantique",
+        "slug": "atlantique-bj03"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ03",
+        "level": 1,
+        "name": {
+          "local": "Atlantique",
+          "en": "Atlantique",
+          "slug": "atlantique-bj03"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 11,
+      "village": 73
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.763",
+      "lon": "2.322"
+    },
+    "metadata": {},
+    "source": {}
+  },
+  {
+    "id": "BJ1209",
+    "level": 2,
+    "level_name": {
+      "local": "Commune",
+      "en": "Commune"
+    },
+    "name": {
+      "local": "Zogbodomey",
+      "en": "Zogbodomey",
+      "slug": "zogbodomey-bj1209"
+    },
+    "code": {
+      "id": "BJ1209",
+      "iso": null
+    },
+    "parent": {
+      "id": "BJ12",
+      "level": 1,
+      "name": {
+        "local": "Zou",
+        "en": "Zou",
+        "slug": "zou-bj12"
+      }
+    },
+    "ancestors": [
+      {
+        "id": "BJ12",
+        "level": 1,
+        "name": {
+          "local": "Zou",
+          "en": "Zou",
+          "slug": "zou-bj12"
+        }
+      }
+    ],
+    "children_count": {
+      "arrondissement": 11,
+      "village": 69
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.026",
+      "lon": "2.197"
+    },
+    "metadata": {},
+    "source": {}
+  }
+]

@@ -363,7 +363,7 @@ export const registerBodyFirstNameMax = 100;
 
 export const registerBodyLastNameMax = 100;
 
-export const registerBodyPhoneRegExp = new RegExp('^\\+229[0-9]{8}$');
+export const registerBodyPhoneRegExp = new RegExp('^\\+229[0-9]{10}$');
 
 
 export const RegisterBody = zod.object({
@@ -496,7 +496,7 @@ export const updateProfileBodyFirstNameMax = 100;
 
 export const updateProfileBodyLastNameMax = 100;
 
-export const updateProfileBodyPhoneRegExp = new RegExp('^\\+229[0-9]{8}$');
+export const updateProfileBodyPhoneRegExp = new RegExp('^\\+229[0-9]{10}$');
 
 
 export const UpdateProfileBody = zod.object({
@@ -555,7 +555,7 @@ export const createAddressBodyLabelMax = 80;
 
 export const createAddressBodyRecipientMax = 120;
 
-export const createAddressBodyPhoneRegExp = new RegExp('^\\+229[0-9]{8}$');
+export const createAddressBodyPhoneRegExp = new RegExp('^\\+229[0-9]{10}$');
 export const createAddressBodyNeighborhoodMax = 120;
 
 export const createAddressBodyLandmarkMax = 240;
@@ -601,7 +601,7 @@ export const updateAddressBodyLabelMax = 80;
 
 export const updateAddressBodyRecipientMax = 120;
 
-export const updateAddressBodyPhoneRegExp = new RegExp('^\\+229[0-9]{8}$');
+export const updateAddressBodyPhoneRegExp = new RegExp('^\\+229[0-9]{10}$');
 export const updateAddressBodyNeighborhoodMax = 120;
 
 export const updateAddressBodyLandmarkMax = 240;

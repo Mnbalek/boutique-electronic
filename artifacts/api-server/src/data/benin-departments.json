@@ -1,0 +1,422 @@
+[
+  {
+    "id": "BJ01",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Alibori",
+      "en": "Alibori",
+      "slug": "alibori-bj01"
+    },
+    "code": {
+      "id": "BJ01",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 6,
+      "village": 229,
+      "arrondissement": 41
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "11.459",
+      "lon": "2.763"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/alibori-bj01/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ02",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Atacora",
+      "en": "Atacora",
+      "slug": "atacora-bj02"
+    },
+    "code": {
+      "id": "BJ02",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 9,
+      "village": 384,
+      "arrondissement": 47
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "10.702",
+      "lon": "1.52"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/atacora-bj02/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ03",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Atlantique",
+      "en": "Atlantique",
+      "slug": "atlantique-bj03"
+    },
+    "code": {
+      "id": "BJ03",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 8,
+      "village": 495,
+      "arrondissement": 74
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.63",
+      "lon": "2.202"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/atlantique-bj03/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ04",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Borgou",
+      "en": "Borgou",
+      "slug": "borgou-bj04"
+    },
+    "code": {
+      "id": "BJ04",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 8,
+      "village": 269,
+      "arrondissement": 43
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.706",
+      "lon": "2.761"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/borgou-bj04/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ05",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Collines",
+      "en": "Collines",
+      "slug": "collines-bj05"
+    },
+    "code": {
+      "id": "BJ05",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 6,
+      "village": 290,
+      "arrondissement": 60
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "8.111",
+      "lon": "2.183"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/collines-bj05/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ06",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Couffo",
+      "en": "Couffo",
+      "slug": "couffo-bj06"
+    },
+    "code": {
+      "id": "BJ06",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 6,
+      "village": 372,
+      "arrondissement": 51
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.098",
+      "lon": "1.758"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/couffo-bj06/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ07",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Donga",
+      "en": "Donga",
+      "slug": "donga-bj07"
+    },
+    "code": {
+      "id": "BJ07",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 4,
+      "village": 179,
+      "arrondissement": 26
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "9.257",
+      "lon": "1.713"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/donga-bj07/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ08",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Littoral",
+      "en": "Littoral",
+      "slug": "littoral-bj08"
+    },
+    "code": {
+      "id": "BJ08",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 1,
+      "village": 82,
+      "arrondissement": 13
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.372",
+      "lon": "2.425"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/littoral-bj08/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ09",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Mono",
+      "en": "Mono",
+      "slug": "mono-bj09"
+    },
+    "code": {
+      "id": "BJ09",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 6,
+      "village": 305,
+      "arrondissement": 35
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.502",
+      "lon": "1.839"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/mono-bj09/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ10",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Oueme",
+      "en": "Oueme",
+      "slug": "oueme-bj10"
+    },
+    "code": {
+      "id": "BJ10",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 9,
+      "village": 503,
+      "arrondissement": 51
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "6.653",
+      "lon": "2.49"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/oueme-bj10/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ11",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Plateau",
+      "en": "Plateau",
+      "slug": "plateau-bj11"
+    },
+    "code": {
+      "id": "BJ11",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 5,
+      "village": 223,
+      "arrondissement": 29
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.099",
+      "lon": "2.641"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/plateau-bj11/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  },
+  {
+    "id": "BJ12",
+    "level": 1,
+    "level_name": {
+      "local": "Département",
+      "en": "Department"
+    },
+    "name": {
+      "local": "Zou",
+      "en": "Zou",
+      "slug": "zou-bj12"
+    },
+    "code": {
+      "id": "BJ12",
+      "iso": null
+    },
+    "parent": null,
+    "ancestors": [],
+    "children_count": {
+      "commune": 9,
+      "village": 439,
+      "arrondissement": 75
+    },
+    "zip_codes": [],
+    "geo": {
+      "lat": "7.286",
+      "lon": "2.125"
+    },
+    "metadata": {},
+    "source": {
+      "name": "Open Admin Data",
+      "url": "https://openadmindata.org/bj/departments/zou-bj12/",
+      "api": "https://openadmindata.org/api/bj/"
+    }
+  }
+]
