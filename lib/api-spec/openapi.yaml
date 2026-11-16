@@ -1,22 +1,26 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
+  # Do not change the title; generated import paths depend on it.
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 1.0.0
+  description: Typed public and customer API contract for the v1.2 storefront.
 servers:
   - url: /api
-    description: Base API path
+    description: Same-origin API base path
 tags:
   - name: health
-    description: Health operations
+  - name: storefront
+  - name: authentication
+  - name: customer
+  - name: cart
+  - name: orders
+  - name: notifications
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
-      summary: Health check
-      description: Returns server health status
+      summary: Check service health
       responses:
         "200":
           description: Healthy
@@ -24,13 +28,1130 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /home:
+    get:
+      operationId: getHome
+      tags: [storefront]
+      summary: Get public home content
+      responses:
+        "200":
+          description: Home content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HomeResponse"
+  /categories:
+    get:
+      operationId: getCategories
+      tags: [storefront]
+      summary: List active categories
+      responses:
+        "200":
+          description: Active category tree
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoriesResponse"
+  /products:
+    get:
+      operationId: getProducts
+      tags: [storefront]
+      summary: Search and paginate visible products
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+        - name: categorie
+          in: query
+          schema: { type: string }
+        - name: prix_min
+          in: query
+          schema: { type: integer, minimum: 0 }
+        - name: prix_max
+          in: query
+          schema: { type: integer, minimum: 0 }
+        - name: disponible
+          in: query
+          schema: { type: boolean }
+        - name: tri
+          in: query
+          schema:
+            type: string
+            enum: [pertinence, prix_croissant, prix_decroissant, nouveaute, popularite]
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: taille
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 48, default: 24 }
+      responses:
+        "200":
+          description: Product page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductsResponse"
+  /products/{slug}:
+    get:
+      operationId: getProduct
+      tags: [storefront]
+      summary: Get a product by stable slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Product detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponse"
+  /geo/departements:
+    get:
+      operationId: getDepartments
+      tags: [storefront]
+      summary: List Benin departments
+      responses:
+        "200":
+          description: Departments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DepartmentsResponse"
+  /geo/communes:
+    get:
+      operationId: getCommunes
+      tags: [storefront]
+      summary: List communes, optionally filtered by department
+      parameters:
+        - name: departement_id
+          in: query
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Communes and delivery availability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommunesResponse"
+  /delivery/quote:
+    get:
+      operationId: getDeliveryQuote
+      tags: [storefront]
+      summary: Quote delivery for a commune
+      parameters:
+        - name: commune_id
+          in: query
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Delivery quote
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeliveryQuoteResponse"
+  /auth/register:
+    post:
+      operationId: register
+      tags: [authentication]
+      summary: Register a customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterInput" }
+      responses:
+        "201":
+          description: Customer registered
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SessionResponse" }
+  /auth/login:
+    post:
+      operationId: login
+      tags: [authentication]
+      summary: Start a customer session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoginInput" }
+      responses:
+        "200":
+          description: Session started
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SessionResponse" }
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [authentication]
+      summary: End the current session
+      responses:
+        "200":
+          description: Session ended
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionResponse" }
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [authentication]
+      summary: Get the current session user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UserResponse" }
+  /auth/password/forgot:
+    post:
+      operationId: requestPasswordReset
+      tags: [authentication]
+      summary: Request password reset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ForgotPasswordInput" }
+      responses:
+        "200":
+          description: Generic response that does not reveal account existence
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionResponse" }
+  /auth/password/reset:
+    post:
+      operationId: resetPassword
+      tags: [authentication]
+      summary: Reset a password with a one-time token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PasswordResetInput" }
+      responses:
+        "200":
+          description: Password reset
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionResponse" }
+  /me:
+    get:
+      operationId: getProfile
+      tags: [customer]
+      summary: Get the current customer profile
+      responses:
+        "200":
+          description: Customer profile
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UserResponse" }
+    patch:
+      operationId: updateProfile
+      tags: [customer]
+      summary: Update editable profile fields
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProfileUpdate" }
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UserResponse" }
+    delete:
+      operationId: anonymizeAccount
+      tags: [customer]
+      summary: Request account anonymization
+      responses:
+        "200":
+          description: Account anonymized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionResponse" }
+  /me/addresses:
+    get:
+      operationId: getAddresses
+      tags: [customer]
+      summary: List the customer's delivery addresses
+      responses:
+        "200":
+          description: Address list
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AddressesResponse" }
+    post:
+      operationId: createAddress
+      tags: [customer]
+      summary: Create a delivery address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AddressInput" }
+      responses:
+        "201":
+          description: Address created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AddressResponse" }
+  /me/addresses/{id}:
+    patch:
+      operationId: updateAddress
+      tags: [customer]
+      summary: Update a delivery address
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AddressInput" }
+      responses:
+        "200":
+          description: Address updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AddressResponse" }
+    delete:
+      operationId: deleteAddress
+      tags: [customer]
+      summary: Delete a delivery address
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Address deleted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionResponse" }
+  /cart:
+    get:
+      operationId: getCart
+      tags: [cart]
+      summary: Get the current customer's cart
+      responses:
+        "200":
+          description: Cart with server-calculated price snapshots
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CartResponse" }
+    delete:
+      operationId: clearCart
+      tags: [cart]
+      summary: Empty the current customer's cart
+      responses:
+        "200":
+          description: Cart cleared
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CartResponse" }
+  /cart/items/{productId}:
+    put:
+      operationId: setCartItem
+      tags: [cart]
+      summary: Set a cart line quantity
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CartItemInput" }
+      responses:
+        "200":
+          description: Updated cart
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CartResponse" }
+    delete:
+      operationId: removeCartItem
+      tags: [cart]
+      summary: Remove one cart line
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Updated cart
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CartResponse" }
+  /cart/merge:
+    post:
+      operationId: mergeCart
+      tags: [cart]
+      summary: Merge a local cart into the customer cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CartMergeInput" }
+      responses:
+        "200":
+          description: Merged cart
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CartResponse" }
+  /checkout/preview:
+    post:
+      operationId: previewCheckout
+      tags: [orders]
+      summary: Preview server-calculated checkout totals
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CheckoutPreviewInput" }
+      responses:
+        "200":
+          description: Authoritative checkout preview
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CheckoutPreviewResponse" }
+  /orders:
+    get:
+      operationId: getOrders
+      tags: [orders]
+      summary: List the current customer's orders
+      parameters:
+        - name: statut
+          in: query
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: taille
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 48, default: 24 }
+      responses:
+        "200":
+          description: Order page
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrdersResponse" }
+    post:
+      operationId: createOrder
+      tags: [orders]
+      summary: Create an order and reserve stock
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema: { type: string, minLength: 16, maxLength: 128 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OrderCreateInput" }
+      responses:
+        "201":
+          description: Pending order created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderResponse" }
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      tags: [orders]
+      summary: Get order detail and status history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Order detail
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderResponse" }
+  /orders/{id}/cancel:
+    post:
+      operationId: cancelPendingOrder
+      tags: [orders]
+      summary: Cancel a pending unpaid order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Order cancelled
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OrderResponse" }
+  /orders/{id}/cancellation-request:
+    post:
+      operationId: requestOrderCancellation
+      tags: [orders]
+      summary: Request cancellation of a paid order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CancellationRequestInput" }
+      responses:
+        "201":
+          description: Cancellation request recorded
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionResponse" }
+  /orders/{id}/payments:
+    post:
+      operationId: retryOrderPayment
+      tags: [orders]
+      summary: Start another payment attempt for a pending order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "201":
+          description: Payment attempt initialized
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaymentAttemptResponse" }
+  /orders/{id}/payment-status:
+    get:
+      operationId: getOrderPaymentStatus
+      tags: [orders]
+      summary: Get verified payment status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Current order payment status
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaymentStatusResponse" }
+  /orders/{id}/receipt:
+    get:
+      operationId: getOrderReceipt
+      tags: [orders]
+      summary: Get printable order receipt
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Receipt data
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ReceiptResponse" }
+  /payments/verify:
+    post:
+      operationId: verifyPayment
+      tags: [orders]
+      summary: Request independent server-side payment verification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PaymentVerificationInput" }
+      responses:
+        "200":
+          description: Verification status
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaymentStatusResponse" }
+  /notifications:
+    get:
+      operationId: getNotifications
+      tags: [notifications]
+      summary: List customer notifications
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, minimum: 1, default: 1 }
+        - name: taille
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 48, default: 24 }
+      responses:
+        "200":
+          description: Notification page
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/NotificationsResponse" }
+  /notifications/unread-count:
+    get:
+      operationId: getUnreadNotificationCount
+      tags: [notifications]
+      summary: Get unread notification count
+      responses:
+        "200":
+          description: Unread count
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/UnreadCountResponse" }
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark one notification read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Notification read
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionResponse" }
+  /notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      tags: [notifications]
+      summary: Mark all notifications read
+      responses:
+        "200":
+          description: All notifications read
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionResponse" }
 components:
   schemas:
     HealthStatus:
       type: object
       properties:
-        status:
-          type: string
-      required:
-        - status
+        status: { type: string }
+      required: [status]
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details: { type: object, additionalProperties: true }
+          required: [code, message]
+      required: [error]
+    PaginationMeta:
+      type: object
+      properties:
+        page: { type: integer, minimum: 1 }
+        taille: { type: integer, minimum: 1 }
+        total: { type: integer, minimum: 0 }
+      required: [page, taille, total]
+    Category:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string }
+        name: { type: string }
+        imageUrl: { type: string, format: uri }
+        productCount: { type: integer, minimum: 0 }
+        parentId: { type: ["string", "null"], format: uuid }
+      required: [id, slug, name, productCount]
+    CategoryTree:
+      type: object
+      properties:
+        category: { $ref: "#/components/schemas/Category" }
+        children:
+          type: array
+          items: { $ref: "#/components/schemas/Category" }
+      required: [category, children]
+    ProductImage:
+      type: object
+      properties:
+        url: { type: string, format: uri }
+        alt: { type: string }
+        isPrimary: { type: boolean }
+      required: [url, alt, isPrimary]
+    ProductAttribute:
+      type: object
+      properties:
+        name: { type: string }
+        value: { type: string }
+      required: [name, value]
+    Product:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string }
+        reference: { type: string }
+        name: { type: string }
+        shortDescription: { type: string }
+        description: { type: string }
+        priceFCFA: { type: integer, minimum: 1 }
+        compareAtPriceFCFA: { type: ["integer", "null"], minimum: 1 }
+        stock: { type: integer, minimum: 0 }
+        available: { type: boolean }
+        isNew: { type: boolean }
+        popularity: { type: integer, minimum: 0 }
+        category: { $ref: "#/components/schemas/Category" }
+        images:
+          type: array
+          items: { $ref: "#/components/schemas/ProductImage" }
+        attributes:
+          type: array
+          items: { $ref: "#/components/schemas/ProductAttribute" }
+        createdAt: { type: string, format: date-time }
+      required: [id, slug, reference, name, shortDescription, description, priceFCFA, stock, available, isNew, popularity, category, images, attributes, createdAt]
+    Promotion:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        description: { type: string }
+        code: { type: ["string", "null"] }
+        percentOff: { type: ["integer", "null"], minimum: 1, maximum: 90 }
+        amountOffFCFA: { type: ["integer", "null"], minimum: 1 }
+        expiresAt: { type: ["string", "null"], format: date-time }
+      required: [id, title, description]
+    HomeBanner:
+      type: object
+      properties:
+        title: { type: string }
+        subtitle: { type: string }
+        imageUrl: { type: string, format: uri }
+        imageAlt: { type: string }
+        actionLabel: { type: string }
+        actionUrl: { type: string }
+      required: [title, subtitle, imageUrl, imageAlt, actionLabel, actionUrl]
+    HomeData:
+      type: object
+      properties:
+        storeName: { type: string }
+        banner: { $ref: "#/components/schemas/HomeBanner" }
+        featuredCategories:
+          type: array
+          items: { $ref: "#/components/schemas/Category" }
+        promotions:
+          type: array
+          items: { $ref: "#/components/schemas/Promotion" }
+        newProducts:
+          type: array
+          items: { $ref: "#/components/schemas/Product" }
+        popularProducts:
+          type: array
+          items: { $ref: "#/components/schemas/Product" }
+      required: [storeName, banner, featuredCategories, promotions, newProducts, popularProducts]
+    HomeResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/HomeData" }
+      required: [data]
+    CategoriesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/CategoryTree" }
+      required: [data]
+    ProductsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Product" }
+        meta: { $ref: "#/components/schemas/PaginationMeta" }
+      required: [data, meta]
+    ProductResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/Product" }
+      required: [data]
+    Department:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        code: { type: string }
+      required: [id, name, code]
+    Commune:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        departmentId: { type: string, format: uuid }
+        name: { type: string }
+        deliveryAvailable: { type: boolean }
+        zoneName: { type: ["string", "null"] }
+      required: [id, departmentId, name, deliveryAvailable]
+    DepartmentsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Department" }
+      required: [data]
+    CommunesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Commune" }
+      required: [data]
+    DeliveryQuote:
+      type: object
+      properties:
+        communeId: { type: string, format: uuid }
+        zoneName: { type: string }
+        feeFCFA: { type: integer, minimum: 0 }
+        deliveryAvailable: { type: boolean }
+      required: [communeId, zoneName, feeFCFA, deliveryAvailable]
+    DeliveryQuoteResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/DeliveryQuote" }
+      required: [data]
+    User:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string, format: email }
+        firstName: { type: string }
+        lastName: { type: string }
+        phone: { type: string }
+        role: { type: string, enum: [customer, admin] }
+      required: [id, email, firstName, lastName, phone, role]
+    RegisterInput:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8, maxLength: 128 }
+        firstName: { type: string, minLength: 1, maxLength: 100 }
+        lastName: { type: string, minLength: 1, maxLength: 100 }
+        phone: { type: string, pattern: "^\\+229[0-9]{8}$" }
+      required: [email, password, firstName, lastName, phone]
+    LoginInput:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 1, maxLength: 128 }
+      required: [email, password]
+    ForgotPasswordInput:
+      type: object
+      properties:
+        email: { type: string, format: email }
+      required: [email]
+    PasswordResetInput:
+      type: object
+      properties:
+        token: { type: string, minLength: 16 }
+        password: { type: string, minLength: 8, maxLength: 128 }
+      required: [token, password]
+    ProfileUpdate:
+      type: object
+      properties:
+        firstName: { type: string, minLength: 1, maxLength: 100 }
+        lastName: { type: string, minLength: 1, maxLength: 100 }
+        phone: { type: string, pattern: "^\\+229[0-9]{8}$" }
+      minProperties: 1
+    UserResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/User" }
+      required: [data]
+    SessionResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/User" }
+      required: [data]
+    ActionResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            success: { type: boolean }
+            message: { type: string }
+          required: [success]
+      required: [data]
+    Address:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        label: { type: string }
+        recipient: { type: string }
+        phone: { type: string }
+        departmentId: { type: string, format: uuid }
+        departmentName: { type: string }
+        communeId: { type: string, format: uuid }
+        communeName: { type: string }
+        neighborhood: { type: string }
+        landmark: { type: string }
+        isDefault: { type: boolean }
+      required: [id, label, recipient, phone, departmentId, departmentName, communeId, communeName, neighborhood, landmark, isDefault]
+    AddressInput:
+      type: object
+      properties:
+        label: { type: string, minLength: 1, maxLength: 80 }
+        recipient: { type: string, minLength: 1, maxLength: 120 }
+        phone: { type: string, pattern: "^\\+229[0-9]{8}$" }
+        departmentId: { type: string, format: uuid }
+        communeId: { type: string, format: uuid }
+        neighborhood: { type: string, minLength: 1, maxLength: 120 }
+        landmark: { type: string, minLength: 1, maxLength: 240 }
+        isDefault: { type: boolean }
+      required: [label, recipient, phone, departmentId, communeId, neighborhood, landmark, isDefault]
+    AddressesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Address" }
+      required: [data]
+    AddressResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/Address" }
+      required: [data]
+    CartLine:
+      type: object
+      properties:
+        productId: { type: string, format: uuid }
+        product: { $ref: "#/components/schemas/Product" }
+        quantity: { type: integer, minimum: 1, maximum: 10 }
+        previousPriceFCFA: { type: ["integer", "null"], minimum: 1 }
+        priceChanged: { type: boolean }
+        lineTotalFCFA: { type: integer, minimum: 0 }
+      required: [productId, product, quantity, priceChanged, lineTotalFCFA]
+    Cart:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/CartLine" }
+        subtotalFCFA: { type: integer, minimum: 0 }
+        itemCount: { type: integer, minimum: 0 }
+        hasChanges: { type: boolean }
+      required: [items, subtotalFCFA, itemCount, hasChanges]
+    CartResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/Cart" }
+      required: [data]
+    CartItemInput:
+      type: object
+      properties:
+        quantity: { type: integer, minimum: 1, maximum: 10 }
+        lastSeenPriceFCFA: { type: integer, minimum: 1 }
+      required: [quantity, lastSeenPriceFCFA]
+    CartMergeLine:
+      type: object
+      properties:
+        productId: { type: string, format: uuid }
+        quantity: { type: integer, minimum: 1, maximum: 10 }
+        lastSeenPriceFCFA: { type: integer, minimum: 1 }
+      required: [productId, quantity, lastSeenPriceFCFA]
+    CartMergeInput:
+      type: object
+      properties:
+        items:
+          type: array
+          maxItems: 30
+          items: { $ref: "#/components/schemas/CartMergeLine" }
+      required: [items]
+    CheckoutPreviewInput:
+      type: object
+      properties:
+        addressId: { type: string, format: uuid }
+        promotionCode: { type: ["string", "null"], maxLength: 64 }
+      required: [addressId]
+    CheckoutLine:
+      type: object
+      properties:
+        productId: { type: string, format: uuid }
+        name: { type: string }
+        imageUrl: { type: string, format: uri }
+        quantity: { type: integer, minimum: 1 }
+        unitPriceFCFA: { type: integer, minimum: 1 }
+        lineTotalFCFA: { type: integer, minimum: 0 }
+      required: [productId, name, imageUrl, quantity, unitPriceFCFA, lineTotalFCFA]
+    CheckoutPreview:
+      type: object
+      properties:
+        lines:
+          type: array
+          items: { $ref: "#/components/schemas/CheckoutLine" }
+        address: { $ref: "#/components/schemas/Address" }
+        subtotalFCFA: { type: integer, minimum: 0 }
+        discountFCFA: { type: integer, minimum: 0 }
+        deliveryFCFA: { type: integer, minimum: 0 }
+        totalFCFA: { type: integer, minimum: 0 }
+        currency: { type: string, enum: [XOF] }
+        promotionMessage: { type: ["string", "null"] }
+        requiresRevalidation: { type: boolean }
+      required: [lines, address, subtotalFCFA, discountFCFA, deliveryFCFA, totalFCFA, currency, requiresRevalidation]
+    CheckoutPreviewResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/CheckoutPreview" }
+      required: [data]
+    OrderStatus:
+      type: string
+      enum: [pending_payment, confirmed, preparing, shipped, delivered, payment_failed, expired, cancellation_requested, cancelled]
+    OrderLine:
+      type: object
+      properties:
+        productId: { type: string, format: uuid }
+        name: { type: string }
+        reference: { type: string }
+        imageUrl: { type: string, format: uri }
+        unitPriceFCFA: { type: integer, minimum: 1 }
+        quantity: { type: integer, minimum: 1 }
+        discountFCFA: { type: integer, minimum: 0 }
+        lineTotalFCFA: { type: integer, minimum: 0 }
+      required: [productId, name, reference, imageUrl, unitPriceFCFA, quantity, discountFCFA, lineTotalFCFA]
+    OrderStatusEvent:
+      type: object
+      properties:
+        status: { $ref: "#/components/schemas/OrderStatus" }
+        createdAt: { type: string, format: date-time }
+        note: { type: ["string", "null"] }
+      required: [status, createdAt]
+    Order:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        reference: { type: string }
+        status: { $ref: "#/components/schemas/OrderStatus" }
+        createdAt: { type: string, format: date-time }
+        expiresAt: { type: ["string", "null"], format: date-time }
+        subtotalFCFA: { type: integer, minimum: 0 }
+        discountFCFA: { type: integer, minimum: 0 }
+        deliveryFCFA: { type: integer, minimum: 0 }
+        totalFCFA: { type: integer, minimum: 0 }
+        currency: { type: string, enum: [XOF] }
+        lines:
+          type: array
+          items: { $ref: "#/components/schemas/OrderLine" }
+        shippingAddress: { $ref: "#/components/schemas/Address" }
+        statusHistory:
+          type: array
+          items: { $ref: "#/components/schemas/OrderStatusEvent" }
+      required: [id, reference, status, createdAt, subtotalFCFA, discountFCFA, deliveryFCFA, totalFCFA, currency, lines, shippingAddress, statusHistory]
+    OrdersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Order" }
+        meta: { $ref: "#/components/schemas/PaginationMeta" }
+      required: [data, meta]
+    OrderResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/Order" }
+      required: [data]
+    OrderCreateInput:
+      type: object
+      properties:
+        addressId: { type: string, format: uuid }
+        promotionCode: { type: ["string", "null"], maxLength: 64 }
+      required: [addressId]
+    CancellationRequestInput:
+      type: object
+      properties:
+        reason: { type: string, minLength: 5, maxLength: 1000 }
+      required: [reason]
+    PaymentAttempt:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        orderId: { type: string, format: uuid }
+        amountFCFA: { type: integer, minimum: 0 }
+        currency: { type: string, enum: [XOF] }
+        status: { type: string, enum: [pending, succeeded, failed, expired, anomaly] }
+        paymentUrl: { type: ["string", "null"], format: uri }
+        createdAt: { type: string, format: date-time }
+      required: [id, orderId, amountFCFA, currency, status, createdAt]
+    PaymentAttemptResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/PaymentAttempt" }
+      required: [data]
+    PaymentStatus:
+      type: object
+      properties:
+        orderId: { type: string, format: uuid }
+        orderStatus: { $ref: "#/components/schemas/OrderStatus" }
+        paymentStatus: { type: string, enum: [pending, succeeded, failed, expired, anomaly] }
+        verified: { type: boolean }
+        updatedAt: { type: string, format: date-time }
+      required: [orderId, orderStatus, paymentStatus, verified, updatedAt]
+    PaymentStatusResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/PaymentStatus" }
+      required: [data]
+    PaymentVerificationInput:
+      type: object
+      properties:
+        orderId: { type: string, format: uuid }
+        paymentAttemptId: { type: string, format: uuid }
+      required: [orderId, paymentAttemptId]
+    Receipt:
+      type: object
+      properties:
+        order: { $ref: "#/components/schemas/Order" }
+        storeName: { type: string }
+        generatedAt: { type: string, format: date-time }
+        legalNotice: { type: string }
+      required: [order, storeName, generatedAt, legalNotice]
+    ReceiptResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/Receipt" }
+      required: [data]
+    Notification:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        message: { type: string }
+        isRead: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        orderId: { type: ["string", "null"], format: uuid }
+      required: [id, title, message, isRead, createdAt]
+    NotificationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: { $ref: "#/components/schemas/Notification" }
+        meta: { $ref: "#/components/schemas/PaginationMeta" }
+      required: [data, meta]
+    UnreadCountResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            count: { type: integer, minimum: 0 }
+          required: [count]
+      required: [data]
 
