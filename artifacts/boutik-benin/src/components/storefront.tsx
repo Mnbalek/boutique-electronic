@@ -19,14 +19,33 @@ import {
   ArrowLeft, ArrowRight, Bell, Check, ChevronDown, CircleHelp, Heart, LockKeyhole,
   Menu, Minus, Package, Plus, Search, ShieldCheck, ShoppingBag, ShoppingCart, Truck, UserRound, X,
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const money = (n?: number) => `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0)} FCFA`;
 const localDate = (date?: string) => date ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeZone: 'Africa/Porto-Novo' }).format(new Date(date)) : '—';
 const demoNotice = 'Démonstration locale : aucune commande, aucun paiement ni e-mail réel.';
-const readGuest = (): Record<string, number> => {
-  try { return JSON.parse(localStorage.getItem('boutik-panier-invite') || '{}') as Record<string, number>; } catch { return {}; }
+type GuestCartItem = { productId: string; quantity: number; lastSeenPriceFCFA: number };
+type GuestCart = Record<string, GuestCartItem>;
+const readGuest = (): GuestCart => {
+  try {
+    const parsed: unknown = JSON.parse(localStorage.getItem('boutik-panier-invite') || '{}');
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    return Object.fromEntries(Object.entries(parsed as Record<string, unknown>).flatMap(([key, value]) => {
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        return [[key, { productId: key, quantity: Math.max(1, Math.floor(value)), lastSeenPriceFCFA: 1 }]];
+      }
+      if (!value || typeof value !== 'object' || Array.isArray(value)) return [];
+      const item = value as Partial<GuestCartItem>;
+      if (typeof item.productId !== 'string' || typeof item.quantity !== 'number') return [];
+      return [[key, {
+        productId: item.productId,
+        quantity: Math.max(1, Math.floor(item.quantity)),
+        lastSeenPriceFCFA: typeof item.lastSeenPriceFCFA === 'number' ? item.lastSeenPriceFCFA : 1,
+      }]];
+    })) as GuestCart;
+  } catch { return {}; }
 };
-const saveGuest = (data: Record<string, number>) => localStorage.setItem('boutik-panier-invite', JSON.stringify(data));
+const saveGuest = (data: GuestCart) => localStorage.setItem('boutik-panier-invite', JSON.stringify(data));
 
 function Retry({ onClick }: { onClick: () => void }) {
   return <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-900" data-testid="status-error"><p className="font-semibold">Le contenu n’a pas pu être chargé.</p><p className="mt-1 text-red-800">Vérifiez votre connexion et réessayez.</p><button onClick={onClick} className="btn btn-sm btn-outline mt-3" data-testid="button-retry">Réessayer</button></div>;
@@ -39,16 +58,19 @@ function Empty({ title, text, href = '/produits', action = 'Voir les produits' }
 }
 function ProductCard({ product, add }: { product: Product; add: (p: Product) => void }) {
   const image = product.images?.[0];
-  return <article className="group overflow-hidden rounded-xl border border-slate-200 bg-white" data-testid={`card-product-${product.id}`}>
-    <Link href={`/produits/${product.slug}`} className="product-art block" data-testid={`link-product-${product.id}`}>
+  return <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white" data-testid={`card-product-${product.id}`}>
+    <Link href={`/produits/${product.slug}`} className="product-art product-card-art block" data-testid={`link-product-${product.id}`}>
       {image ? <img src={image.url} srcSet={`${image.url} 1x`} alt={image.alt || product.name} loading="lazy" data-testid={`img-product-${product.id}`} /> : <div className="grid h-full place-items-center text-slate-500">Image indisponible</div>}
     </Link>
-    <div className="p-4">
+    <div className="flex flex-1 flex-col p-3 sm:p-4">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">{product.category?.name}</p>
-      <Link href={`/produits/${product.slug}`} className="mt-1 block font-display font-semibold text-slate-900 hover:text-primary" data-testid={`link-title-${product.id}`}>{product.name}</Link>
-      <p className="mt-2 text-lg font-bold text-primary" data-testid={`text-price-${product.id}`}>{money(product.priceFCFA)}</p>
-      <p className={`mt-1 text-xs ${product.available ? 'text-emerald-800' : 'text-red-800'}`} data-testid={`status-stock-${product.id}`}>{product.available ? 'Disponible' : 'Indisponible'}</p>
-      <button disabled={!product.available || product.stock < 1} onClick={() => add(product)} className="btn btn-primary btn-sm mt-3 w-full" data-testid={`button-add-${product.id}`}><ShoppingCart size={15} /> Ajouter au panier</button>
+      <Link href={`/produits/${product.slug}`} className="mt-1 line-clamp-2 min-h-10 block font-display font-semibold leading-5 text-slate-900 hover:text-primary" data-testid={`link-title-${product.id}`}>{product.name}</Link>
+      <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <p className="text-lg font-bold text-primary" data-testid={`text-price-${product.id}`}>{money(product.priceFCFA)}</p>
+        {product.compareAtPriceFCFA && product.compareAtPriceFCFA > product.priceFCFA && <del className="text-xs text-slate-600" data-testid={`text-original-price-${product.id}`}>{money(product.compareAtPriceFCFA)}</del>}
+      </div>
+      <p className={`mt-1 text-xs ${product.available ? 'text-emerald-800' : 'text-red-800'}`} data-testid={`status-stock-${product.id}`}>{product.available ? 'Disponible' : 'Épuisé'}</p>
+      <button disabled={!product.available || product.stock < 1} aria-label={product.available ? `Ajouter ${product.name} au panier` : `${product.name} est épuisé`} onClick={() => add(product)} className="btn btn-primary btn-sm mt-auto min-h-9 w-full flex-nowrap gap-1.5 whitespace-nowrap px-2 text-xs sm:text-sm" data-testid={`button-add-${product.id}`}><ShoppingCart size={15} /><span className="hidden sm:inline">{product.available ? 'Ajouter au panier' : 'Épuisé'}</span><span className="sm:hidden">{product.available ? 'Ajouter' : 'Épuisé'}</span></button>
     </div>
   </article>;
 }
@@ -59,9 +81,9 @@ function ProductGrid({ products, add }: { products: Product[]; add: (p: Product)
 
 function StoreShell({ children }: { children: React.ReactNode }) {
   const [menu, setMenu] = useState(false);
-  const user = useGetCurrentUser();
-  const cart = useGetCart();
-  const count = cart.data?.data?.itemCount ?? Object.values(readGuest()).reduce((a, b) => a + b, 0);
+  const user = useGetCurrentUser({ query: { queryKey: getGetCurrentUserQueryKey(), retry: false } });
+  const cart = useGetCart({ query: { enabled: !!user.data?.data, queryKey: getGetCartQueryKey() } });
+  const count = cart.data?.data?.itemCount ?? Object.values(readGuest()).reduce((total, item) => total + item.quantity, 0);
   const unread = useGetUnreadNotificationCount({ query: { enabled: !!user.data?.data, queryKey: getGetUnreadNotificationCountQueryKey() } });
   return <div className="min-h-[100dvh] overflow-x-clip">
     <div className="bg-primary px-3 py-2 text-center text-xs font-semibold text-white" data-testid="banner-demo">{demoNotice}</div>
@@ -107,12 +129,12 @@ function HomePage({ add }: { add: (p: Product) => void }) {
         <Link href={d.banner.actionUrl || '/produits'} className="btn btn-accent w-fit" data-testid="link-home-cta">{d.banner.actionLabel || 'Voir les produits'} <ArrowRight size={17}/></Link>
       </div>
     </section>
-    <div className="mb-10 grid grid-cols-1 gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-4 sm:grid-cols-3 sm:p-5">
+    {d.featuredCategories?.length > 0 && <section className="mb-12"><div className="mb-4 flex items-end justify-between"><div><p className="eyebrow">Parcourir</p><h2 className="font-display text-2xl font-semibold">Nos catégories</h2></div><Link href="/produits" className="text-sm font-semibold text-primary" data-testid="link-all-categories">Tout voir</Link></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{d.featuredCategories.map(c=><Link href={`/categories/${c.slug}`} key={c.id} className="relative flex min-h-32 items-end overflow-hidden rounded-xl bg-emerald-100 p-4 text-white" data-testid={`link-category-${c.id}`}>{c.imageUrl && <img src={c.imageUrl} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover"/>}<span className="absolute inset-0 bg-gradient-to-t from-slate-950/75 to-transparent"/><span className="relative font-display font-semibold">{c.name}</span></Link>)}</div></section>}
+    {d.promotions?.length > 0 && <section className="mb-12"><div className="mb-4"><p className="eyebrow">Sélection du moment</p><h2 className="font-display text-2xl font-semibold">Promotions actives</h2></div><div className="grid gap-3 sm:grid-cols-2">{d.promotions.map(p=><article key={p.id} className="rounded-xl border border-amber-200 bg-amber-50 p-5" data-testid={`card-promotion-${p.id}`}><h3 className="font-display text-lg font-semibold">{p.title}</h3><p className="mt-1 text-sm text-slate-700">{p.description}</p>{p.code && <p className="mt-3 font-mono text-sm font-bold">Code : {p.code}</p>}</article>)}</div></section>}
+    {[['Nouveautés',d.newProducts],['Les plus appréciés',d.popularProducts]].map(([title,items])=><section className="mb-12" key={title as string}><div className="mb-4 flex items-end justify-between"><h2 className="font-display text-2xl font-semibold">{title as string}</h2><Link href="/produits" className="text-sm font-semibold text-primary" data-testid={`link-more-${String(title).toLowerCase().replaceAll(' ','-')}`}>Voir tout <ArrowRight className="inline" size={15}/></Link></div><ProductGrid products={items as Product[]} add={add}/></section>)}
+    <div className="grid grid-cols-1 gap-3 rounded-xl border border-emerald-100 bg-emerald-50 p-4 sm:grid-cols-3 sm:p-5">
       {[['Choix clair','Des informations utiles sur chaque article.'],['Livraison indiquée','Les frais sont présentés avant validation.'],['Achat accompagné','Retrouvez vos commandes dans votre compte.']].map(([a,b])=><div key={a} className="flex gap-3"><ShieldCheck className="shrink-0 text-primary"/><div><p className="text-sm font-semibold">{a}</p><p className="text-xs text-slate-600">{b}</p></div></div>)}
     </div>
-    {d.featuredCategories?.length > 0 && <section className="mb-12"><div className="mb-4 flex items-end justify-between"><div><p className="eyebrow">Parcourir</p><h2 className="font-display text-2xl font-semibold">Nos catégories</h2></div><Link href="/produits" className="text-sm font-semibold text-primary" data-testid="link-all-categories">Tout voir</Link></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{d.featuredCategories.map(c=><Link href={`/categories/${c.slug}`} key={c.id} className="relative flex min-h-32 items-end overflow-hidden rounded-xl bg-emerald-100 p-4 text-white" data-testid={`link-category-${c.id}`}>{c.imageUrl && <img src={c.imageUrl} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover"/>}<span className="absolute inset-0 bg-gradient-to-t from-slate-950/75 to-transparent"/><span className="relative font-display font-semibold">{c.name}</span></Link>)}</div></section>}
-    {d.promotions?.length > 0 && <section className="mb-12"><div className="mb-4"><p className="eyebrow">Sélection du moment</p><h2 className="font-display text-2xl font-semibold">À découvrir</h2></div><div className="grid gap-3 sm:grid-cols-2">{d.promotions.map(p=><article key={p.id} className="rounded-xl border border-amber-200 bg-amber-50 p-5" data-testid={`card-promotion-${p.id}`}><h3 className="font-display text-lg font-semibold">{p.title}</h3><p className="mt-1 text-sm text-slate-700">{p.description}</p>{p.code && <p className="mt-3 font-mono text-sm font-bold">Code : {p.code}</p>}</article>)}</div></section>}
-    {[['Nouveautés',d.newProducts],['Les plus appréciés',d.popularProducts]].map(([title,items])=><section className="mb-12" key={title as string}><div className="mb-4 flex items-end justify-between"><h2 className="font-display text-2xl font-semibold">{title as string}</h2><Link href="/produits" className="text-sm font-semibold text-primary" data-testid={`link-more-${String(title).toLowerCase().replaceAll(' ','-')}`}>Voir tout <ArrowRight className="inline" size={15}/></Link></div><ProductGrid products={items as Product[]} add={add}/></section>)}
   </div>;
 }
 
@@ -165,16 +187,49 @@ function ProductsPage({ add, categorySlug }: { add: (p: Product) => void; catego
   </div>;
 }
 
-function ProductPage({ add }: { add: (p: Product) => void }) {
+function ProductPage({ add }: { add: (p: Product, quantity?: number) => void }) {
   const { slug = '' } = useParams<{slug:string}>();
   const q = useGetProduct(slug);
   const [imageIndex,setImageIndex]=useState(0);
+  const [quantity,setQuantity]=useState(1);
+  useEffect(()=>{setImageIndex(0);setQuantity(1);},[slug]);
   if(q.isLoading)return <Loading lines={5}/>;
   if(q.isError)return <Retry onClick={()=>void q.refetch()}/>;
   const p=q.data?.data;
   if(!p)return <Empty title="Article introuvable" text="Cet article n’est plus accessible." />;
   const image=p.images?.[imageIndex];
-  return <div data-testid="page-product"><Link href="/produits" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-primary" data-testid="link-back-products"><ArrowLeft size={16}/> Tous les produits</Link><div className="grid gap-8 lg:grid-cols-2"><div><div className="product-art overflow-hidden rounded-xl bg-white">{image&&<img src={image.url} alt={image.alt||p.name} fetchPriority="high" data-testid="img-product-detail"/>}</div>{p.images?.length>1&&<div className="mt-3 flex gap-2">{p.images.map((im,i)=><button key={im.url} onClick={()=>setImageIndex(i)} className={`h-16 w-16 overflow-hidden rounded-lg border-2 ${i===imageIndex?'border-primary':'border-slate-200'}`} aria-label={`Afficher l’image ${i+1}`} data-testid={`button-image-${i}`}><img src={im.url} alt={im.alt||''} className="h-full w-full object-cover"/></button>)}</div>}</div><section><p className="eyebrow">{p.category.name}</p><h1 className="font-display text-3xl font-bold tracking-tight" data-testid="text-product-name">{p.name}</h1><p className="mt-4 text-2xl font-bold text-primary" data-testid="text-product-price">{money(p.priceFCFA)}</p><p className={`mt-2 text-sm font-semibold ${p.available?'text-emerald-800':'text-red-800'}`} data-testid="status-product-availability">{p.available?`Disponible · ${p.stock} en stock`:'Indisponible'}</p><p className="mt-5 leading-7 text-slate-700">{p.description}</p><button disabled={!p.available||p.stock<1} onClick={()=>add(p)} className="btn btn-primary mt-6 w-full sm:w-auto" data-testid="button-add-product"><ShoppingCart size={17}/>Ajouter au panier</button><div className="mt-8 space-y-3 rounded-xl bg-emerald-50 p-4 text-sm"><p className="flex gap-2"><Truck size={17} className="text-primary"/>Options de livraison communiquées avant validation.</p><p className="flex gap-2"><ShieldCheck size={17} className="text-primary"/>Démonstration locale, aucun paiement réel.</p></div>{p.attributes?.length>0&&<div className="mt-8"><h2 className="font-display text-lg font-semibold">Caractéristiques</h2><dl className="mt-3 divide-y">{p.attributes.map(a=><div key={a.name} className="flex justify-between py-2 text-sm"><dt className="text-slate-600">{a.name}</dt><dd className="font-medium">{a.value}</dd></div>)}</dl></div>}</section></div></div>;
+  const maxQuantity=Math.min(10,p.stock);
+  return <div data-testid="page-product">
+    <Link href="/produits" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-primary" data-testid="link-back-products"><ArrowLeft size={16}/> Tous les produits</Link>
+    <div className="grid gap-8 lg:grid-cols-2">
+      <div>
+        <div className="product-art product-detail-art overflow-hidden rounded-xl bg-white">
+          {image?<img src={image.url} alt={image.alt||p.name} fetchPriority="high" data-testid="img-product-detail"/>:<div className="grid h-full place-items-center text-slate-500">Image indisponible</div>}
+        </div>
+        {p.images?.length>1&&<div className="mt-3 flex gap-2">{p.images.map((im,i)=><button key={im.url} onClick={()=>setImageIndex(i)} className={`h-16 w-16 overflow-hidden rounded-lg border-2 ${i===imageIndex?'border-primary':'border-slate-200'}`} aria-label={`Afficher l’image ${i+1}`} data-testid={`button-image-${i}`}><img src={im.url} alt={im.alt||''} className="h-full w-full object-cover"/></button>)}</div>}
+      </div>
+      <section>
+        <p className="eyebrow">{p.category.name}</p>
+        <h1 className="font-display text-3xl font-bold tracking-tight" data-testid="text-product-name">{p.name}</h1>
+        <div className="mt-4 flex flex-wrap items-baseline gap-2">
+          <p className="text-2xl font-bold text-primary" data-testid="text-product-price">{money(p.priceFCFA)}</p>
+          {p.compareAtPriceFCFA&&p.compareAtPriceFCFA>p.priceFCFA&&<del className="text-sm text-slate-600" data-testid="text-product-original-price">{money(p.compareAtPriceFCFA)}</del>}
+        </div>
+        <p className={`mt-2 text-sm font-semibold ${p.available?'text-emerald-800':'text-red-800'}`} data-testid="status-product-availability">{p.available?`Disponible · ${p.stock} en stock`:'Épuisé'}</p>
+        <p className="mt-5 leading-7 text-slate-700">{p.description}</p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end">
+          <label className="form-label w-full sm:max-w-32">Quantité
+            <select value={quantity} onChange={e=>setQuantity(Number(e.target.value))} disabled={!p.available||maxQuantity<1} className="select select-bordered mt-1 w-full" data-testid="select-product-quantity">
+              {Array.from({length:Math.max(1,maxQuantity)},(_,i)=><option key={i+1} value={i+1}>{i+1}</option>)}
+            </select>
+          </label>
+          <button disabled={!p.available||maxQuantity<1} onClick={()=>add(p,quantity)} className="btn btn-primary w-full sm:w-auto" data-testid="button-add-product"><ShoppingCart size={17}/>{p.available?'Ajouter au panier':'Épuisé'}</button>
+        </div>
+        <div className="mt-8 space-y-3 rounded-xl bg-emerald-50 p-4 text-sm"><p className="flex gap-2"><Truck size={17} className="text-primary"/>Options de livraison communiquées avant validation.</p><p className="flex gap-2"><ShieldCheck size={17} className="text-primary"/>Démonstration locale, aucun paiement réel.</p></div>
+        {p.attributes?.length>0&&<div className="mt-8"><h2 className="font-display text-lg font-semibold">Caractéristiques</h2><dl className="mt-3 divide-y">{p.attributes.map(a=><div key={a.name} className="flex justify-between py-2 text-sm"><dt className="text-slate-600">{a.name}</dt><dd className="font-medium">{a.value}</dd></div>)}</dl></div>}
+      </section>
+    </div>
+  </div>;
 }
 
 function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
@@ -190,7 +245,7 @@ function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
       if(mode==='register'&&form.password!==form.confirm){setError('Les mots de passe ne correspondent pas.');return;}
       const mutation=mode==='register'?reg:login;
       const data=mode==='register'?{email:form.email,password:form.password,firstName:form.firstName,lastName:form.lastName,phone:form.phone}:{email:form.email,password:form.password};
-      mutation.mutate({data} as never,{onSuccess:()=>{const guest=readGuest();const items=Object.entries(guest).map(([productId,quantity])=>({productId,quantity,lastSeenPriceFCFA:1}));if(items.length)merge.mutate({data:{items}} as never);saveGuest({});setLocation('/compte');},onError:(err)=>setError((err as Error).message||'Vérifiez les informations saisies.')});
+      mutation.mutate({data} as never,{onSuccess:()=>{const guest=readGuest();const items=Object.values(guest).map(({productId,quantity,lastSeenPriceFCFA})=>({productId,quantity,lastSeenPriceFCFA}));if(items.length)merge.mutate({data:{items}} as never);saveGuest({});setLocation('/compte');},onError:(err)=>setError((err as Error).message||'Vérifiez les informations saisies.')});
     } else if(mode==='forgot') forgot.mutate({data:{email:form.email}},{onSuccess:()=>setSuccess('Si cette adresse correspond à un compte, une instruction de réinitialisation est disponible dans cette démonstration.'),onError:()=>setError('La demande n’a pas pu être traitée. Réessayez.')});
     else reset.mutate({data:{token:jeton,password:form.password}},{onSuccess:()=>{setSuccess('Le mot de passe a été mis à jour pour la démonstration.');setTimeout(()=>setLocation('/connexion'),1200);},onError:()=>setError('Le lien est invalide ou expiré.')});
   };
@@ -198,11 +253,11 @@ function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
   return <div className="mx-auto grid max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white md:grid-cols-[.8fr_1.2fr]" data-testid={`page-${mode}`}>
     <aside className="hidden bg-primary p-8 text-white md:flex md:flex-col md:justify-between"><ShoppingBag className="text-accent" size={30}/><div><h2 className="font-display text-3xl font-semibold">Achetez en toute confiance.</h2><p className="mt-3 text-sm leading-6 text-white/85">{demoNotice}</p></div><Link href="/" className="text-sm font-semibold" data-testid="link-auth-home">Retour à la boutique <ArrowRight className="inline" size={15}/></Link></aside>
     <form onSubmit={submit} className="p-5 sm:p-9"><p className="eyebrow">Boutik Bénin</p><h1 className="font-display text-2xl font-semibold">{title}</h1><p className="mt-2 text-sm text-slate-600">{mode==='register'?'Vos informations servent à gérer vos commandes.':mode==='login'?'Connectez-vous pour retrouver votre espace.':demoNotice}</p>
-      {(mode==='register')&&<div className="mt-6 grid gap-4 sm:grid-cols-2"><label className="form-label">Prénom<input required value={form.firstName} onChange={e=>setForm({...form,firstName:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-first-name"/></label><label className="form-label">Nom<input required value={form.lastName} onChange={e=>setForm({...form,lastName:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-last-name"/></label></div>}
-      <label className="form-label mt-5 block">Adresse e-mail<input required type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-email"/></label>
-      {mode==='register'&&<label className="form-label mt-4 block">Téléphone<input required type="tel" pattern="01[0-9]{8}" placeholder="01 90 00 00 00" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value.replace(/\s/g,'')})} className="input input-bordered mt-1 w-full" data-testid="input-phone"/><span className="mt-1 block text-xs text-slate-600">Indicatif +229, suivi de 8 chiffres.</span></label>}
-      {(mode==='register'||mode==='login'||mode==='reset')&&<label className="form-label mt-4 block">Mot de passe<input required minLength={8} type="password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-password"/></label>}
-      {(mode==='register'||mode==='reset')&&<label className="form-label mt-4 block">Confirmer le mot de passe<input required minLength={8} type="password" value={form.confirm} onChange={e=>setForm({...form,confirm:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-password-confirm"/></label>}
+       {(mode==='register')&&<div className="mt-6 grid gap-4 sm:grid-cols-2"><label className="form-label">Prénom<input autoComplete="given-name" required value={form.firstName} onChange={e=>setForm({...form,firstName:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-first-name"/></label><label className="form-label">Nom<input autoComplete="family-name" required value={form.lastName} onChange={e=>setForm({...form,lastName:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-last-name"/></label></div>}
+       <label className="form-label mt-5 block">Adresse e-mail<input autoComplete="email" required type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-email"/></label>
+       {mode==='register'&&<label className="form-label mt-4 block">Téléphone<input autoComplete="tel" required type="tel" pattern="01[0-9]{8}" placeholder="01 90 00 00 00" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value.replace(/\s/g,'')})} className="input input-bordered mt-1 w-full" data-testid="input-phone"/><span className="mt-1 block text-xs text-slate-600">Indicatif +229, suivi de 8 chiffres.</span></label>}
+       {(mode==='register'||mode==='login'||mode==='reset')&&<label className="form-label mt-4 block">Mot de passe<input autoComplete={mode==='login'?'current-password':'new-password'} required minLength={8} type="password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-password"/></label>}
+       {(mode==='register'||mode==='reset')&&<label className="form-label mt-4 block">Confirmer le mot de passe<input autoComplete="new-password" required minLength={8} type="password" value={form.confirm} onChange={e=>setForm({...form,confirm:e.target.value})} className="input input-bordered mt-1 w-full" data-testid="input-password-confirm"/></label>}
       {error&&<p role="alert" className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-900" data-testid="status-auth-error">{error}</p>}{success&&<p role="status" className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900" data-testid="status-auth-success">{success}</p>}
       <button disabled={pending} className="btn btn-primary mt-6 w-full" data-testid="button-auth-submit">{pending?'Veuillez patienter…': mode==='register'?'Créer mon compte':mode==='login'?'Se connecter':mode==='forgot'?'Demander la réinitialisation':'Réinitialiser le mot de passe'}</button>
       <div className="mt-5 flex flex-wrap justify-between gap-3 text-sm text-primary">{mode!=='login'&&mode!=='register'&&<Link href="/connexion" data-testid="link-login">Connexion</Link>}{mode==='login'&&<Link href="/mot-de-passe-oublie" data-testid="link-forgot">Mot de passe oublié ?</Link>}{mode==='login'&&<Link href="/inscription" data-testid="link-register">Créer un compte</Link>}</div>
@@ -210,27 +265,27 @@ function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
   </div>;
 }
 
-function CartPage({ isGuest, setGuest }: {isGuest:boolean;setGuest:(x:Record<string,number>)=>void}) {
-  const [,go]=useLocation(); const cartQ=useGetCart(); const guest=readGuest();
+function CartPage({ isGuest, setGuest }: {isGuest:boolean;setGuest:(x:GuestCart)=>void}) {
+  const [,go]=useLocation(); const cartQ=useGetCart({query:{enabled:!isGuest,queryKey:getGetCartQueryKey()}}); const guest=readGuest();
   const setItem=useSetCartItem();const remove=useRemoveCartItem();const clear=useClearCart();
   const entries=cartQ.data?.data?.items||[];
   if(!isGuest&&cartQ.isLoading)return <Loading/>;
   if(!isGuest&&cartQ.isError)return <Retry onClick={()=>void cartQ.refetch()}/>;
   if((isGuest?Object.keys(guest).length===0:entries.length===0))return <Empty title="Votre panier est vide" text="Parcourez la boutique et ajoutez les articles qui vous intéressent." />;
-  const update=(id:string,q:number,price:number,stock:number)=>{const next=Math.max(1,Math.min(10,stock,q));if(isGuest){const n={...guest,[id]:next};saveGuest(n);setGuest(n);}else setItem.mutate({productId:id,data:{quantity:next,lastSeenPriceFCFA:price}} as never);};
+  const update=(id:string,q:number,price:number,stock:number,productId=id)=>{if(stock<1)return;const next=Math.max(1,Math.min(10,stock,Math.floor(q)));if(isGuest){const n={...guest,[id]:{productId,quantity:next,lastSeenPriceFCFA:price}};saveGuest(n);setGuest(n);}else setItem.mutate({productId:id,data:{quantity:next,lastSeenPriceFCFA:price}} as never);};
   const erase=(id:string)=>{if(isGuest){const n={...guest};delete n[id];saveGuest(n);setGuest(n);}else remove.mutate({productId:id});};
   return <div data-testid="page-cart"><h1 className="font-display text-3xl font-semibold">Votre panier</h1><p className="mt-2 text-sm text-slate-600">{isGuest?'Panier invité enregistré sur cet appareil.':'Panier synchronisé à votre compte.'}</p>
-    <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]"><section className="space-y-3">{isGuest?Object.entries(guest).map(([id,qty])=><GuestLine key={id} id={id} qty={qty} onUpdate={(p,q)=>update(id,q,p.priceFCFA,p.stock)} onRemove={()=>erase(id)}/>):entries.map(line=><article key={line.productId} className="flex gap-4 rounded-xl border bg-white p-3 sm:p-4" data-testid={`row-cart-${line.productId}`}><img className="h-24 w-24 rounded-lg object-cover" src={line.product.images[0]?.url} alt={line.product.images[0]?.alt||line.product.name}/><div className="min-w-0 flex-1"><Link href={`/produits/${line.product.slug}`} className="font-semibold" data-testid={`link-cart-product-${line.productId}`}>{line.product.name}</Link><p className="mt-1 text-sm text-slate-600">{money(line.product.priceFCFA)} · {line.product.stock} disponible(s)</p>{line.priceChanged&&<p className="text-xs font-semibold text-amber-800">Le prix a changé : vérifiez avant de continuer.</p>}<div className="mt-2 flex items-center gap-2"><button className="btn btn-ghost btn-xs" onClick={()=>update(line.productId,line.quantity-1,line.product.priceFCFA,line.product.stock)} aria-label="Diminuer la quantité" data-testid={`button-minus-${line.productId}`}><Minus size={14}/></button><span data-testid={`text-quantity-${line.productId}`}>{line.quantity}</span><button className="btn btn-ghost btn-xs" onClick={()=>update(line.productId,line.quantity+1,line.product.priceFCFA,line.product.stock)} aria-label="Augmenter la quantité" data-testid={`button-plus-${line.productId}`}><Plus size={14}/></button><button className="ml-auto text-xs font-semibold text-red-800 underline" onClick={()=>erase(line.productId)} data-testid={`button-remove-${line.productId}`}>Retirer</button></div></div><strong className="whitespace-nowrap text-sm" data-testid={`text-line-total-${line.productId}`}>{money(line.lineTotalFCFA)}</strong></article>)}</section>
+    <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]"><section className="space-y-3">{isGuest?Object.entries(guest).map(([slug,item])=><GuestLine key={slug} slug={slug} qty={item.quantity} onUpdate={(p,q)=>update(slug,q,p.priceFCFA,p.stock,p.id)} onRemove={()=>erase(slug)}/>):entries.map(line=><article key={line.productId} className="flex gap-4 rounded-xl border bg-white p-3 sm:p-4" data-testid={`row-cart-${line.productId}`}><img className="h-24 w-24 rounded-lg object-cover" src={line.product.images[0]?.url} alt={line.product.images[0]?.alt||line.product.name}/><div className="min-w-0 flex-1"><Link href={`/produits/${line.product.slug}`} className="font-semibold" data-testid={`link-cart-product-${line.productId}`}>{line.product.name}</Link><p className="mt-1 text-sm text-slate-600">{money(line.product.priceFCFA)} · {line.product.stock} disponible(s)</p>{line.priceChanged&&<p className="text-xs font-semibold text-amber-800">Le prix a changé : vérifiez avant de continuer.</p>}<div className="mt-2 flex items-center gap-2"><button className="btn btn-ghost btn-xs" onClick={()=>update(line.productId,line.quantity-1,line.product.priceFCFA,line.product.stock)} aria-label="Diminuer la quantité" data-testid={`button-minus-${line.productId}`}><Minus size={14}/></button><span data-testid={`text-quantity-${line.productId}`}>{line.quantity}</span><button className="btn btn-ghost btn-xs" onClick={()=>update(line.productId,line.quantity+1,line.product.priceFCFA,line.product.stock)} aria-label="Augmenter la quantité" data-testid={`button-plus-${line.productId}`}><Plus size={14}/></button><button className="ml-auto text-xs font-semibold text-red-800 underline" onClick={()=>erase(line.productId)} data-testid={`button-remove-${line.productId}`}>Retirer</button></div></div><strong className="whitespace-nowrap text-sm" data-testid={`text-line-total-${line.productId}`}>{money(line.lineTotalFCFA)}</strong></article>)}</section>
       <aside className="h-fit rounded-xl border bg-white p-5"><h2 className="font-display text-lg font-semibold">Récapitulatif</h2><p className="mt-3 flex justify-between text-sm"><span>Sous-total</span><strong>{isGuest?'Calculé à la validation':money(cartQ.data?.data?.subtotalFCFA)}</strong></p><p className="mt-3 text-xs leading-5 text-slate-600">Les montants définitifs sont fournis lors de l’aperçu de commande.</p><button className="btn btn-primary mt-5 w-full" onClick={()=>go(isGuest?'/connexion?retour=commande':'/commande')} data-testid="button-continue-checkout">Continuer</button><button className="btn btn-ghost btn-sm mt-2 w-full" onClick={()=>isGuest?(saveGuest({}),setGuest({})):clear.mutate(undefined)} data-testid="button-clear-cart">Vider le panier</button></aside>
     </div>
   </div>;
 }
-function GuestLine({id,qty,onUpdate,onRemove}:{id:string;qty:number;onUpdate:(p:Product,q:number)=>void;onRemove:()=>void}){
-  const p=useGetProduct(id);
+function GuestLine({slug,qty,onUpdate,onRemove}:{slug:string;qty:number;onUpdate:(p:Product,q:number)=>void;onRemove:()=>void}){
+  const p=useGetProduct(slug);
   if(p.isLoading)return <Loading lines={1}/>;
-  if(p.isError||!p.data?.data)return <article className="rounded-lg border bg-white p-4" data-testid={`row-guest-${id}`}><p>Un article du panier invité n’est plus disponible.</p><button className="btn btn-sm btn-outline mt-2" onClick={onRemove} data-testid={`button-remove-${id}`}>Retirer</button></article>;
+  if(p.isError||!p.data?.data)return <article className="rounded-lg border bg-white p-4" data-testid={`row-guest-${slug}`}><p>Un article du panier invité n’est plus disponible.</p><button className="btn btn-sm btn-outline mt-2" onClick={onRemove} data-testid={`button-remove-${slug}`}>Retirer</button></article>;
   const prod=p.data.data;
-  return <article className="flex gap-4 rounded-xl border bg-white p-3" data-testid={`row-cart-${id}`}><img className="h-24 w-24 rounded-lg object-cover" src={prod.images[0]?.url} alt={prod.images[0]?.alt||prod.name}/><div className="flex-1"><Link href={`/produits/${prod.slug}`} className="font-semibold">{prod.name}</Link><p>{money(prod.priceFCFA)}</p><div className="mt-2 flex items-center gap-2"><button className="btn btn-ghost btn-xs" onClick={()=>onUpdate(prod,qty-1)} data-testid={`button-minus-${id}`}><Minus size={14}/></button><span data-testid={`text-quantity-${id}`}>{qty}</span><button className="btn btn-ghost btn-xs" onClick={()=>onUpdate(prod,qty+1)} data-testid={`button-plus-${id}`}><Plus size={14}/></button><button className="ml-auto text-xs text-red-800 underline" onClick={onRemove} data-testid={`button-remove-${id}`}>Retirer</button></div></div><strong>{money(prod.priceFCFA*qty)}</strong></article>;
+  return <article className="flex gap-4 rounded-xl border bg-white p-3" data-testid={`row-cart-${slug}`}><img className="h-24 w-24 rounded-lg object-cover" src={prod.images[0]?.url} alt={prod.images[0]?.alt||prod.name}/><div className="flex-1"><Link href={`/produits/${prod.slug}`} className="font-semibold" data-testid={`link-guest-cart-product-${slug}`}>{prod.name}</Link><p>{money(prod.priceFCFA)}</p><div className="mt-2 flex items-center gap-2"><button className="btn btn-ghost btn-xs" aria-label="Diminuer la quantité" onClick={()=>onUpdate(prod,qty-1)} data-testid={`button-minus-${slug}`}><Minus size={14}/></button><span data-testid={`text-quantity-${slug}`}>{qty}</span><button className="btn btn-ghost btn-xs" aria-label="Augmenter la quantité" onClick={()=>onUpdate(prod,qty+1)} data-testid={`button-plus-${slug}`}><Plus size={14}/></button><button className="ml-auto text-xs text-red-800 underline" onClick={onRemove} data-testid={`button-remove-${slug}`}>Retirer</button></div></div><strong>{money(prod.priceFCFA*qty)}</strong></article>;
 }
 
 function CheckoutPage() {
@@ -259,7 +314,7 @@ function PaymentReturnPage(){
 }
 
 function AccountPage({section}:{section:string}){
- const user=useGetCurrentUser();const logout=useLogout();const profile=useGetProfile();const update=useUpdateProfile();const anon=useAnonymizeAccount();
+ const user=useGetCurrentUser({query:{queryKey:getGetCurrentUserQueryKey(),retry:false}});const logout=useLogout();const profile=useGetProfile();const update=useUpdateProfile();const anon=useAnonymizeAccount();
  const addresses=useGetAddresses();const departments=useGetDepartments();const communes=useGetCommunes();
  const orders=useGetOrders({page:1,taille:20});const notifications=useGetNotifications({page:1,taille:30});
  const createAddress=useCreateAddress();const updateAddress=useUpdateAddress();const deleteAddress=useDeleteAddress();
@@ -302,9 +357,10 @@ function ContactPage(){const [sent,setSent]=useState(false);return <div classNam
 function NotFound(){return <div className="mx-auto max-w-xl py-16 text-center" data-testid="page-not-found"><p className="eyebrow">Erreur 404</p><h1 className="font-display text-4xl font-semibold">Cette page est introuvable.</h1><p className="mt-3 text-slate-600">Le lien est peut-être incorrect ou la page a été déplacée.</p><Link href="/" className="btn btn-primary mt-6" data-testid="link-not-found-home">Retour à l’accueil</Link></div>}
 
 export default function Storefront(){
- const current=useGetCurrentUser();const [guest,setGuestState]=useState<Record<string,number>>(readGuest);const setGuest=(x:Record<string,number>)=>{saveGuest(x);setGuestState(x);};
+ const current=useGetCurrentUser({query:{queryKey:getGetCurrentUserQueryKey(),retry:false}});const cart=useGetCart({query:{enabled:!!current.data?.data,queryKey:getGetCartQueryKey()}});const {toast}=useToast();
+ const [guest,setGuestState]=useState<GuestCart>(readGuest);const setGuest=(x:GuestCart)=>{saveGuest(x);setGuestState(x);};
  const setItem=useSetCartItem();
- const add=(p:Product)=>{if(!p.available||p.stock<1)return;if(current.data?.data){setItem.mutate({productId:p.id,data:{quantity:1,lastSeenPriceFCFA:p.priceFCFA}} as never);}else{const g=readGuest();g[p.id]=Math.min(10,p.stock,(g[p.id]||0)+1);setGuest(g);}};
+ const add=(p:Product,requestedQuantity=1)=>{const maxQuantity=Math.min(10,p.stock);if(!p.available||maxQuantity<1)return;const increment=Math.max(1,Math.floor(requestedQuantity));if(current.data?.data){const existing=cart.data?.data?.items.find(item=>item.productId===p.id)?.quantity||0;const quantity=Math.min(maxQuantity,existing+increment);setItem.mutate({productId:p.id,data:{quantity,lastSeenPriceFCFA:p.priceFCFA}} as never,{onSuccess:()=>toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`}),onError:()=>toast({title:'Ajout impossible',description:'L’article n’a pas pu être ajouté. Réessayez.',variant:'destructive'})});}else{const guestCart=readGuest();const quantity=Math.min(maxQuantity,(guestCart[p.slug]?.quantity||0)+increment);guestCart[p.slug]={productId:p.id,quantity,lastSeenPriceFCFA:p.priceFCFA};setGuest(guestCart);toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`});}};
  return <StoreShell><Switch>
   <Route path="/"><HomePage add={add}/></Route>
   <Route path="/produits"><ProductsPage add={add}/></Route>

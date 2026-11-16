@@ -11,6 +11,7 @@ const categoryDefinitions = [
     children: [
       { id: 101, slug: "telephonie", name: "Téléphonie" },
       { id: 102, slug: "audio-image", name: "Audio et image" },
+      { id: 103, slug: "informatique", name: "Informatique" },
     ],
   },
   {
@@ -20,6 +21,8 @@ const categoryDefinitions = [
     children: [
       { id: 201, slug: "sacs", name: "Sacs" },
       { id: 202, slug: "chaussures", name: "Chaussures" },
+      { id: 203, slug: "vetements", name: "Vêtements" },
+      { id: 204, slug: "accessoires", name: "Accessoires" },
     ],
   },
   {
@@ -124,9 +127,9 @@ type ProductSeed = {
 const seeds: ProductSeed[] = [
   { name: "Smartphone Noku A8", slug: "smartphone-noku-a8", reference: "BB-HT-001", categorySlug: "telephonie", priceFCFA: 89500, stock: 14, photoId: "1511707171634-5f897ff02aa9", description: "Un téléphone polyvalent présenté dans la sélection high-tech de démonstration.", isNew: true },
   { name: "Smartphone Aza 128 Go", slug: "smartphone-aza-128", reference: "BB-HT-002", categorySlug: "telephonie", priceFCFA: 112000, stock: 9, photoId: "1598327105666-5b89351aff97", description: "Un format moderne pour rester joignable et consulter vos applications au quotidien.", compareAtPriceFCFA: 125000 },
-  { name: "Ordinateur portable Alada 14", slug: "ordinateur-alada-14", reference: "BB-HT-003", categorySlug: "telephonie", priceFCFA: 245000, stock: 5, photoId: "1517336714731-489689fd1ca8", description: "Un ordinateur compact présenté pour illustrer les fiches du catalogue.", isNew: true },
-  { name: "Tablette Sèmè 10", slug: "tablette-seme-10", reference: "BB-HT-004", categorySlug: "telephonie", priceFCFA: 138000, stock: 11, photoId: "1531297484001-80022131f5a1", description: "Un grand écran dans un format pensé pour la consultation et les loisirs." },
-  { name: "Ordinateur portable Kétou 15", slug: "ordinateur-ketou-15", reference: "BB-HT-005", categorySlug: "telephonie", priceFCFA: 289000, stock: 7, photoId: "1496181133206-80ce9b88a853", description: "Un ordinateur de démonstration pour la sélection des équipements numériques." },
+  { name: "Ordinateur portable Alada 14", slug: "ordinateur-alada-14", reference: "BB-HT-003", categorySlug: "informatique", priceFCFA: 245000, stock: 5, photoId: "1517336714731-489689fd1ca8", description: "Un ordinateur compact présenté pour illustrer les fiches du catalogue.", isNew: true },
+  { name: "Tablette Sèmè 10", slug: "tablette-seme-10", reference: "BB-HT-004", categorySlug: "informatique", priceFCFA: 138000, stock: 11, photoId: "1531297484001-80022131f5a1", description: "Un grand écran dans un format pensé pour la consultation et les loisirs." },
+  { name: "Ordinateur portable Kétou 15", slug: "ordinateur-ketou-15", reference: "BB-HT-005", categorySlug: "informatique", priceFCFA: 289000, stock: 7, photoId: "1496181133206-80ce9b88a853", description: "Un ordinateur de démonstration pour la sélection des équipements numériques." },
   { name: "Appareil photo compact Wémè", slug: "appareil-photo-weme", reference: "BB-HT-006", categorySlug: "audio-image", priceFCFA: 159000, stock: 4, photoId: "1526170375885-4d8ecf77b99f", description: "Un appareil compact présenté parmi les équipements d’image." },
   { name: "Casque audio Atakora", slug: "casque-audio-atakora", reference: "BB-HT-007", categorySlug: "audio-image", priceFCFA: 32500, stock: 0, photoId: "1505740420928-5e560c06d30e", description: "Un casque audio de démonstration, actuellement indiqué comme épuisé." },
   { name: "Enceinte portable Kora Mini", slug: "enceinte-kora-mini", reference: "BB-HT-008", categorySlug: "audio-image", priceFCFA: 27900, stock: 18, photoId: "1583394838336-acd977736f90", description: "Une enceinte nomade pour écouter vos contenus à la maison ou en déplacement.", isNew: true },
@@ -138,7 +141,7 @@ const seeds: ProductSeed[] = [
   { name: "Baskets rouges Cotonou", slug: "baskets-rouges-cotonou", reference: "BB-MA-005", categorySlug: "chaussures", priceFCFA: 32000, stock: 10, photoId: "1542291026-7eec264c27ff", description: "Des baskets colorées présentées pour illustrer la catégorie chaussures.", isNew: true },
   { name: "Baskets en toile Dantokpa", slug: "baskets-toile-dantokpa", reference: "BB-MA-006", categorySlug: "chaussures", priceFCFA: 21500, stock: 6, photoId: "1525966222134-fcfa99b8ae77", description: "Une paire en toile au style décontracté, donnée de démonstration." },
   { name: "Sandales Kora", slug: "sandales-kora", reference: "BB-MA-007", categorySlug: "chaussures", priceFCFA: 14500, stock: 13, photoId: "1543163521-1bf539c55dd2", description: "Des sandales présentées dans la sélection mode et accessoires." },
-  { name: "Chemise coton Djougou", slug: "chemise-coton-djougou", reference: "BB-MA-008", categorySlug: "chaussures", priceFCFA: 19500, stock: 9, photoId: "1551488831-00ddcb6c6bd3", description: "Une pièce vestimentaire de démonstration pour compléter le catalogue." },
+  { name: "Chemise coton Djougou", slug: "chemise-coton-djougou", reference: "BB-MA-008", categorySlug: "vetements", priceFCFA: 19500, stock: 9, photoId: "1551488831-00ddcb6c6bd3", description: "Une pièce vestimentaire de démonstration pour compléter le catalogue." },
 
   { name: "Fauteuil Akpakpa", slug: "fauteuil-akpakpa", reference: "BB-MD-001", categorySlug: "mobilier", priceFCFA: 98500, stock: 5, photoId: "1503602642458-232111445657", description: "Un fauteuil présenté dans une mise en scène claire et lumineuse.", isNew: true },
   { name: "Canapé compact Zinsou", slug: "canape-compact-zinsou", reference: "BB-MD-002", categorySlug: "mobilier", priceFCFA: 285000, stock: 2, photoId: "1555041469-a586c61ea9bc", description: "Un canapé de démonstration pour illustrer la sélection maison." },
@@ -156,7 +159,7 @@ const seeds: ProductSeed[] = [
   { name: "Eau de parfum Éclat", slug: "eau-de-parfum-eclat", reference: "BB-BS-005", categorySlug: "parfums", priceFCFA: 28500, stock: 8, photoId: "1598440947619-2c35fc9aa908", description: "Un parfum de démonstration présenté dans un univers épuré." },
   { name: "Parfum Ambre Atlantique", slug: "parfum-ambre-atlantique", reference: "BB-BS-006", categorySlug: "parfums", priceFCFA: 34500, stock: 4, photoId: "1585386959984-a4155224a1ad", description: "Une fragrance de démonstration pour illustrer la gamme parfumerie." },
   { name: "Brume parfumée Cotonou", slug: "brume-parfumee-cotonou", reference: "BB-BS-007", categorySlug: "parfums", priceFCFA: 14500, stock: 19, photoId: "1594035910387-fea47794261f", description: "Une brume parfumée présentée dans la sélection beauté." },
-  { name: "Soin quotidien Dassa", slug: "soin-quotidien-dassa", reference: "BB-BS-008", categorySlug: "parfums", priceFCFA: 9900, stock: 10, photoId: "1571781926291-c477ebfd024b", description: "Un soin de démonstration pour compléter une routine quotidienne." },
+  { name: "Soin quotidien Dassa", slug: "soin-quotidien-dassa", reference: "BB-BS-008", categorySlug: "soin-visage", priceFCFA: 9900, stock: 10, photoId: "1571781926291-c477ebfd024b", description: "Un soin de démonstration pour compléter une routine quotidienne." },
 
   { name: "Blender compact Ifè", slug: "blender-compact-ife", reference: "BB-CU-001", categorySlug: "preparation", priceFCFA: 29500, stock: 11, photoId: "1556911220-e15b29be8c8f", description: "Un appareil de préparation présenté dans la sélection cuisine." },
   { name: "Moulin à café Ouidah", slug: "moulin-cafe-ouidah", reference: "BB-CU-002", categorySlug: "preparation", priceFCFA: 18500, stock: 7, photoId: "1495474472287-4d71bcdd2085", description: "Un moulin de démonstration pour les amateurs de café." },
@@ -173,8 +176,8 @@ const seeds: ProductSeed[] = [
   { name: "Collier perles Ganvié", slug: "collier-perles-ganvie", reference: "BB-BM-004", categorySlug: "bijoux", priceFCFA: 17800, stock: 7, photoId: "1611652022419-a9419f74343d", description: "Un collier de démonstration pour illustrer les accessoires." },
   { name: "Bracelet fin Abomey", slug: "bracelet-fin-abomey", reference: "BB-BM-005", categorySlug: "bijoux", priceFCFA: 9800, stock: 18, photoId: "1605100804763-247f67b3557e", description: "Un bracelet présenté dans la sélection de bijoux." },
   { name: "Collier doré Ségbana", slug: "collier-dore-segbana", reference: "BB-BM-006", categorySlug: "bijoux", priceFCFA: 22000, stock: 9, photoId: "1599643478518-a784e5dc4c8f", description: "Un collier de démonstration aux lignes délicates." },
-  { name: "Lunettes de soleil Zagnanado", slug: "lunettes-soleil-zagnanado", reference: "BB-BM-007", categorySlug: "bijoux", priceFCFA: 14500, stock: 0, photoId: "1572635196237-14b3f281503f", description: "Une paire de lunettes de démonstration actuellement épuisée." },
-  { name: "Gourde nomade Karimama", slug: "gourde-nomade-karimama", reference: "BB-BM-008", categorySlug: "bijoux", priceFCFA: 8900, stock: 2, photoId: "1602143407151-7111542de6e8", description: "Une gourde réutilisable de démonstration, avec un stock faible." },
+  { name: "Lunettes de soleil Zagnanado", slug: "lunettes-soleil-zagnanado", reference: "BB-BM-007", categorySlug: "accessoires", priceFCFA: 14500, stock: 0, photoId: "1572635196237-14b3f281503f", description: "Une paire de lunettes de démonstration actuellement épuisée." },
+  { name: "Gourde nomade Karimama", slug: "gourde-nomade-karimama", reference: "BB-BM-008", categorySlug: "preparation", priceFCFA: 8900, stock: 2, photoId: "1602143407151-7111542de6e8", description: "Une gourde réutilisable de démonstration, avec un stock faible." },
 ];
 
 export const demoProducts: Product[] = seeds.map((seed, index) => {
@@ -206,6 +209,20 @@ export const demoProducts: Product[] = seeds.map((seed, index) => {
     createdAt: new Date(Date.now() - index * 86_400_000).toISOString(),
   };
 });
+
+for (const { category, children } of demoCategoryTrees) {
+  category.productCount = demoProducts.filter(
+    (product) =>
+      product.category.id === category.id ||
+      product.category.parentId === category.id,
+  ).length;
+
+  for (const child of children) {
+    child.productCount = demoProducts.filter(
+      (product) => product.category.id === child.id,
+    ).length;
+  }
+}
 
 export const unsplashDemoImageLicense =
   "https://unsplash.com/license";
