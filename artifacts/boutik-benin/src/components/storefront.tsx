@@ -118,19 +118,34 @@ function HomePage({ add }: { add: (p: Product) => void }) {
 
 function ProductsPage({ add, categorySlug }: { add: (p: Product) => void; categorySlug?: string }) {
   const [loc, setLoc] = useLocation();
-  const params = new URLSearchParams(loc.split('?')[1] || '');
-  const [search, setSearch] = useState(params.get('q') || '');
+  const [queryString, setQueryString] = useState(() => window.location.search);
+  const params = new URLSearchParams(queryString);
+  const [search, setSearch] = useState(() => params.get('q') || '');
+  useEffect(() => {
+    const syncQuery = () => {
+      const nextQuery = window.location.search;
+      setQueryString(nextQuery);
+      setSearch(new URLSearchParams(nextQuery).get('q') || '');
+    };
+    window.addEventListener('popstate', syncQuery);
+    return () => window.removeEventListener('popstate', syncQuery);
+  }, []);
+  useEffect(() => {
+    const nextQuery = window.location.search;
+    setQueryString(nextQuery);
+    setSearch(new URLSearchParams(nextQuery).get('q') || '');
+  }, [categorySlug]);
   const apiParams: GetProductsParams = {
     q: params.get('q') || undefined, categorie: categorySlug || params.get('categorie') || undefined,
     prix_min: params.has('prix_min') ? Number(params.get('prix_min')) : undefined,
     prix_max: params.has('prix_max') ? Number(params.get('prix_max')) : undefined,
     disponible: params.get('disponible') === 'true' ? true : undefined,
     tri: (params.get('tri') as GetProductsParams['tri']) || 'pertinence',
-    page: Math.max(1, Number(params.get('page') || 1)), taille: 12,
+    page: Math.max(1, Number(params.get('page') || 1)), taille: 24,
   };
   const query = useGetProducts(apiParams);
   const categories = useGetCategories();
-  const setParam = (key: string, value: string) => { const n = new URLSearchParams(loc.split('?')[1] || ''); value ? n.set(key, value) : n.delete(key); n.delete('page'); setLoc(`${categorySlug ? `/categories/${categorySlug}` : '/produits'}${n.size ? `?${n}` : ''}`); };
+  const setParam = (key: string, value: string) => { const n = new URLSearchParams(queryString); value ? n.set(key, value) : n.delete(key); n.delete('page'); const nextQuery = n.toString(); setQueryString(nextQuery ? `?${nextQuery}` : ''); setLoc(`${categorySlug ? `/categories/${categorySlug}` : '/produits'}${nextQuery ? `?${nextQuery}` : ''}`); };
   const submit = (e: FormEvent) => { e.preventDefault(); setParam('q', search.trim()); };
   const meta = query.data?.meta;
   return <div data-testid="page-products">
@@ -145,7 +160,7 @@ function ProductsPage({ add, categorySlug }: { add: (p: Product) => void; catego
     </div>
     {query.isLoading ? <Loading lines={8}/> : query.isError ? <Retry onClick={()=>void query.refetch()}/> : <>
       <div className="mb-4 text-sm text-slate-600" data-testid="text-results-count">{meta?.total ?? query.data?.data?.length ?? 0} article(s)</div><ProductGrid products={query.data?.data || []} add={add}/>
-      {(meta?.total || 0) > (meta?.taille || 12) && <nav className="mt-8 flex items-center justify-center gap-4" aria-label="Pagination"><button disabled={apiParams.page! <= 1} className="btn btn-outline btn-sm" onClick={()=>setParam('page',String(apiParams.page!-1))} data-testid="button-page-previous">Précédent</button><span data-testid="text-current-page">Page {meta?.page} / {Math.ceil((meta?.total||0)/(meta?.taille||12))}</span><button disabled={apiParams.page! >= Math.ceil((meta?.total||0)/(meta?.taille||12))} className="btn btn-outline btn-sm" onClick={()=>setParam('page',String(apiParams.page!+1))} data-testid="button-page-next">Suivant</button></nav>}
+      {(meta?.total || 0) > (meta?.taille || 24) && <nav className="mt-8 flex items-center justify-center gap-4" aria-label="Pagination"><button disabled={apiParams.page! <= 1} className="btn btn-outline btn-sm" onClick={()=>setParam('page',String(apiParams.page!-1))} data-testid="button-page-previous">Précédent</button><span data-testid="text-current-page">Page {meta?.page} / {Math.ceil((meta?.total||0)/(meta?.taille||24))}</span><button disabled={apiParams.page! >= Math.ceil((meta?.total||0)/(meta?.taille||24))} className="btn btn-outline btn-sm" onClick={()=>setParam('page',String(apiParams.page!+1))} data-testid="button-page-next">Suivant</button></nav>}
     </>}
   </div>;
 }

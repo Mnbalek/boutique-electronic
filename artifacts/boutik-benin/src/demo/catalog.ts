@@ -193,7 +193,7 @@ export const demoProducts: Product[] = seeds.map((seed, index) => {
     stock: seed.stock,
     available: seed.stock > 0,
     isNew: seed.isNew ?? false,
-    popularity: Math.max(0, 48 - index) * 3,
+    popularity: ((index * 17 + 13) % seeds.length) * 3,
     category,
     images: [
       {

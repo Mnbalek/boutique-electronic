@@ -6,10 +6,13 @@ Le cahier des charges v1.2 fourni est la source de vérité produit. Construire 
 
 ## Run & Operate
 
+- `pnpm install --frozen-lockfile` — restaurer les dépendances du workspace après import
 - `pnpm --filter @workspace/boutik-benin run typecheck` — vérifier le frontend de la boutique
 - `pnpm run typecheck` — vérifier tous les packages du workspace
 - Le workflow `artifacts/boutik-benin: web` sert le frontend actuel.
-- La phase 1 est un aperçu du système de design uniquement ; aucun parcours boutique, API ou base de données n’est encore implémenté.
+- En développement seulement, MSW fournit les lectures de démonstration de l’accueil et du catalogue depuis `src/demo/catalog.ts`. Ces données ne sont ni commerciales ni persistées.
+- `artifacts/api-server` expose actuellement uniquement `/api/healthz` ; les opérations boutique, client, commande et administration ne sont pas implémentées côté serveur.
+- La phase en cours reste la validation visuelle. Ne pas présenter la démonstration locale comme une boutique fonctionnelle ni commencer la phase suivante sans validation de l’utilisateur.
 
 ## Stack
 
@@ -29,6 +32,7 @@ Le cahier des charges v1.2 fourni est la source de vérité produit. Construire 
 - La boutique est généraliste, destinée au Bénin et exploitée par un seul administrateur.
 - « Boutik Bénin » est un nom provisoire et doit rester configurable, comme prévu par la v1.2.
 - Les produits et commandes de démonstration sont des exemples d’interface, pas des données commerciales réelles.
+- Le serveur API du workspace est pour l’instant le scaffold Express fourni par Replit ; le cahier v1.2 décrit Netlify Functions/Hono. Ce choix d’hébergement et d’adaptation reste à clarifier avant la mise en production.
 
 ## Product
 

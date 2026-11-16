@@ -453,6 +453,8 @@
   --spacing: 0.25rem;
   --primary-hex: #0B6B4F;
   --accent-hex: #F2B705;
+  --color-primary-content: hsl(var(--primary-foreground));
+  --color-accent-content: hsl(var(--accent-foreground));
   --danger-hex: #C62828;
   --success-hex: #2E7D32;
   --info-hex: #1565C0;
