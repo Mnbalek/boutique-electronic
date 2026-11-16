@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Boutik Bénin"
+description = "Étape 1 de la boutique en ligne béninoise : système visuel personnalisé, composants réutilisables et page de démonstration pour valider l’interface avant la construction du catalogue et des parcours client."
+version = "1.0.0"
+id = "artifacts/boutik-benin"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23695
+
+[services.development]
+run = "pnpm --filter @workspace/boutik-benin run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/boutik-benin", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/boutik-benin/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23695"
+BASE_PATH = "/"
