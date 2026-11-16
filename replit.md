@@ -10,6 +10,7 @@ Le cahier des charges v1.2 fourni est la source de vérité produit. Construire 
 - `pnpm --filter @workspace/boutik-benin run typecheck` — vérifier le frontend de la boutique
 - `pnpm run typecheck` — vérifier tous les packages du workspace
 - Le workflow `artifacts/boutik-benin: web` sert le frontend actuel.
+- Pour le lancer dans le workflow Replit : `pnpm --filter @workspace/boutik-benin run dev`.
 - En développement seulement, MSW fournit les lectures de démonstration de l’accueil et du catalogue depuis `src/demo/catalog.ts`. Ces données ne sont ni commerciales ni persistées.
 - `artifacts/api-server` expose actuellement uniquement `/api/healthz` ; les opérations boutique, client, commande et administration ne sont pas implémentées côté serveur.
 - La phase en cours reste la validation visuelle. Ne pas présenter la démonstration locale comme une boutique fonctionnelle ni commencer la phase suivante sans validation de l’utilisateur.
