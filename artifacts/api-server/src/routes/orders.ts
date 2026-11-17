@@ -1,18 +1,21 @@
-import { randomInt } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import { and, asc, count, desc, eq, gte, gt, inArray, isNull, lte, or, sql } from "@workspace/db";
 import {
   CreateOrderBody,
   CreateOrderHeader,
   CreateOrderResponse,
+  GetOrderPaymentStatusResponse,
   GetOrderResponse,
   GetOrdersQueryParams,
   GetOrdersResponse,
   PreviewCheckoutBody,
   PreviewCheckoutResponse,
+  RetryOrderPaymentResponse,
 } from "@workspace/api-zod";
 import { getDb } from "@workspace/db";
 import {
   addresses,
+  auditLogs,
   cartItems,
   carts,
   categories,
@@ -22,13 +25,16 @@ import {
   orderItems,
   orderStatusHistory,
   orders,
+  notifications,
   paymentAttempts,
+  paymentEvents,
   productImages,
   products,
   promotionProducts,
   promotionUsages,
   promotions,
   stockReservations,
+  stockMovements,
 } from "@workspace/db/schema";
 import { Hono, type Context } from "hono";
 import { getAuthenticatedUser } from "./auth";
@@ -403,6 +409,110 @@ router.get("/orders/:id", async (context) => {
   const data = await loadOrder(user.id, id);
   if (!data) return fail(context, 404, "COMMANDE_INTROUVABLE", "Commande introuvable.");
   return context.json(GetOrderResponse.parse({ data }));
+});
+
+router.post("/orders/:id/payments", async (context) => {
+  const user = await getAuthenticatedUser(context);
+  if (!user) return fail(context, 401, "NON_AUTHENTIFIE", "Une connexion est nécessaire.");
+  const parsed = RetryOrderPaymentResponse.shape.data.shape.orderId.safeParse(context.req.param("id"));
+  if (!parsed.success) return fail(context, 400, "PARAMETRE_INVALIDE", "Identifiant de commande invalide.");
+  if (getPaymentMode() !== "mock") return fail(context, 409, "PAIEMENT_INDISPONIBLE", "Le paiement de démonstration n’est pas activé.");
+
+  const orderId = parsed.data;
+  const now = new Date();
+  const result = await getDb().transaction(async (tx) => {
+    const [order] = await tx.select().from(orders)
+      .where(and(eq(orders.id, orderId), eq(orders.userId, user.id))).for("update");
+    if (!order) return { error: { status: 404 as const, code: "COMMANDE_INTROUVABLE", message: "Commande introuvable." } };
+
+    const [latest] = await tx.select().from(paymentAttempts).where(eq(paymentAttempts.orderId, orderId))
+      .orderBy(desc(paymentAttempts.createdAt)).limit(1).for("update");
+    if (order.status === "confirmed" && latest?.status === "succeeded") {
+      return { payment: latest, alreadyPaid: true as const };
+    }
+    if (order.status !== "pending_payment" || !order.expiresAt || order.expiresAt <= now) {
+      if (order.status === "pending_payment" && order.expiresAt && order.expiresAt <= now) {
+        await tx.update(orders).set({ status: "expired", updatedAt: now }).where(eq(orders.id, orderId));
+        await tx.update(stockReservations).set({ status: "expired", updatedAt: now })
+          .where(and(eq(stockReservations.orderId, orderId), eq(stockReservations.status, "active")));
+        if (latest?.status === "pending") {
+          await tx.update(paymentAttempts).set({ status: "expired", providerStatus: "order_expired", verifiedAt: now, updatedAt: now })
+            .where(eq(paymentAttempts.id, latest.id));
+        }
+        await tx.insert(orderStatusHistory).values({ orderId, fromStatus: "pending_payment", toStatus: "expired", authorType: "system", reason: "Délai de paiement dépassé" });
+      }
+      return { error: { status: 409 as const, code: "COMMANDE_NON_PAYABLE", message: "Cette commande ne peut plus être payée." } };
+    }
+
+    let payment = latest;
+    if (payment?.status !== "pending") {
+      if (payment?.status !== "failed") return { error: { status: 409 as const, code: "TENTATIVE_ABSENTE", message: "Aucune tentative de paiement disponible." } };
+      [payment] = await tx.insert(paymentAttempts).values({
+        orderId, internalReference: `SIM-${order.reference}-${randomUUID()}`, amountFCFA: order.totalFCFA,
+        currency: order.currency, mode: "mock", status: "pending", providerStatus: "customer_simulation_retry",
+      }).returning();
+    }
+    if (!payment) return { error: { status: 409 as const, code: "TENTATIVE_ABSENTE", message: "Aucune tentative de paiement disponible." } };
+
+    const lines = await tx.select({ productId: orderItems.productId, quantity: orderItems.quantity }).from(orderItems)
+      .where(eq(orderItems.orderId, orderId)).orderBy(asc(orderItems.productId));
+    if (!lines.length) return { error: { status: 409 as const, code: "COMMANDE_VIDE", message: "La commande ne contient aucun article." } };
+    const reservations = await tx.select({ productId: stockReservations.productId, quantity: stockReservations.quantity })
+      .from(stockReservations).where(and(eq(stockReservations.orderId, orderId), eq(stockReservations.status, "active"), gt(stockReservations.expiresAt, now)))
+      .orderBy(asc(stockReservations.productId)).for("update");
+    const reservationByProduct = new Map(reservations.map((reservation) => [reservation.productId, reservation.quantity]));
+    if (lines.some((line) => reservationByProduct.get(line.productId) !== line.quantity)) {
+      return { error: { status: 409 as const, code: "RESERVATION_EXPIREE", message: "La réservation de stock n’est plus valide. Reprenez votre commande." } };
+    }
+    const productIds = lines.map((line) => line.productId);
+    const lockedProducts = await tx.select({ id: products.id, stock: products.stockPhysical }).from(products)
+      .where(inArray(products.id, productIds)).orderBy(asc(products.id)).for("update");
+    const stockByProduct = new Map(lockedProducts.map((product) => [product.id, product.stock]));
+    if (lines.some((line) => (stockByProduct.get(line.productId) ?? 0) < line.quantity)) {
+      return { error: { status: 409 as const, code: "STOCK_INSUFFISANT", message: "Le stock a changé; le paiement ne peut pas être confirmé." } };
+    }
+
+    for (const line of lines) {
+      const stockBefore = stockByProduct.get(line.productId)!;
+      const stockAfter = stockBefore - line.quantity;
+      await tx.update(products).set({ stockPhysical: stockAfter, updatedAt: now }).where(eq(products.id, line.productId));
+      await tx.insert(stockMovements).values({ productId: line.productId, type: "sale", variation: -line.quantity, stockBefore, stockAfter, orderId, authorId: user.id, reason: "Commande confirmée par paiement de démonstration" });
+    }
+    await tx.update(stockReservations).set({ status: "consumed", updatedAt: now })
+      .where(and(eq(stockReservations.orderId, orderId), eq(stockReservations.status, "active")));
+    await tx.update(orders).set({ status: "confirmed", confirmedAt: now, updatedAt: now }).where(eq(orders.id, orderId));
+    await tx.update(paymentAttempts).set({ mode: "mock", status: "succeeded", providerStatus: "customer_simulated_succeeded", verifiedAt: now,
+      usefulResponse: { simulation: true, outcome: "succeeded", customerId: user.id }, updatedAt: now }).where(eq(paymentAttempts.id, payment.id));
+    await tx.insert(orderStatusHistory).values({ orderId, fromStatus: "pending_payment", toStatus: "confirmed", authorType: "customer", authorId: user.id, reason: "Paiement de démonstration confirmé" });
+    await tx.insert(notifications).values({ userId: user.id, type: "order_confirmed", title: "Commande confirmée", message: `La commande ${order.reference} est confirmée.`, link: `/compte/commandes/${orderId}`, idempotencyKey: `customer-sim-payment:${orderId}` }).onConflictDoNothing();
+    await tx.insert(paymentEvents).values({ source: "return", payload: { simulation: true, outcome: "succeeded", internalReference: payment.internalReference, orderReference: order.reference }, reconciled: true, processedAt: now });
+    await tx.insert(auditLogs).values({ actorId: user.id, action: "payment.simulated.succeeded", entityType: "order", entityId: orderId, metadata: { reference: order.reference, amountFCFA: payment.amountFCFA } });
+    return { payment, alreadyPaid: false as const };
+  });
+
+  if ("error" in result && result.error) return fail(context, result.error.status, result.error.code, result.error.message);
+  const data = RetryOrderPaymentResponse.parse({ data: {
+    id: result.payment.id, orderId, amountFCFA: result.payment.amountFCFA, currency: result.payment.currency,
+    status: "succeeded", paymentUrl: null, createdAt: result.payment.createdAt,
+  } });
+  return context.json(data, result.alreadyPaid ? 200 : 201);
+});
+
+router.get("/orders/:id/payment-status", async (context) => {
+  const user = await getAuthenticatedUser(context);
+  if (!user) return fail(context, 401, "NON_AUTHENTIFIE", "Une connexion est nécessaire.");
+  const parsed = GetOrderPaymentStatusResponse.shape.data.shape.orderId.safeParse(context.req.param("id"));
+  if (!parsed.success) return fail(context, 400, "PARAMETRE_INVALIDE", "Identifiant de commande invalide.");
+  const orderId = parsed.data;
+  const [order] = await getDb().select({ id: orders.id, status: orders.status, updatedAt: orders.updatedAt }).from(orders)
+    .where(and(eq(orders.id, orderId), eq(orders.userId, user.id))).limit(1);
+  if (!order) return fail(context, 404, "COMMANDE_INTROUVABLE", "Commande introuvable.");
+  const [payment] = await getDb().select({ status: paymentAttempts.status, updatedAt: paymentAttempts.updatedAt }).from(paymentAttempts)
+    .where(eq(paymentAttempts.orderId, orderId)).orderBy(desc(paymentAttempts.createdAt)).limit(1);
+  return context.json(GetOrderPaymentStatusResponse.parse({ data: {
+    orderId, orderStatus: order.status, paymentStatus: payment?.status ?? "pending",
+    verified: payment ? payment.status !== "pending" : false, updatedAt: payment?.updatedAt ?? order.updatedAt,
+  } }));
 });
 
 export default router;

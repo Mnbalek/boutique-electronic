@@ -69,7 +69,7 @@ router.get("/admin/orders", async (context) => {
   for (const payment of paymentRows) if (!latestPayments.has(payment.orderId)) latestPayments.set(payment.orderId, payment);
   const data = rows.map((row) => {
     const payment = latestPayments.get(row.id);
-    return { ...row, paymentStatus: payment?.status ?? null, paymentSimulation: payment?.providerStatus?.startsWith("admin_simulated_") ?? false };
+    return { ...row, paymentStatus: payment?.status ?? null, paymentSimulation: payment?.providerStatus?.includes("_simulated_") ?? false };
   });
   return context.json({ data });
 });
