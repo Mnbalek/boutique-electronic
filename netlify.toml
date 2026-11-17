@@ -1,6 +1,6 @@
 [build]
 base = "."
-command = "node node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/bin/esbuild netlify/functions/api.mts --bundle --platform=node --format=esm --packages=bundle --outfile=artifacts/api-server/dist/api.mjs && pnpm --filter @workspace/boutik-benin run build"
+command = "node_modules/.pnpm/esbuild@0.28.2/node_modules/esbuild/bin/esbuild netlify/functions/api.mts --bundle --platform=node --format=esm --packages=bundle --outfile=artifacts/api-server/dist/api.mjs && pnpm --filter @workspace/boutik-benin run build"
 publish = "artifacts/boutik-benin/dist/public"
 functions = "artifacts/api-server/dist"
 
