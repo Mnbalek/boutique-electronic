@@ -3,6 +3,7 @@ import { and, asc, count, desc, eq, inArray, sql } from "@workspace/db";
 import { getDb } from "@workspace/db";
 import {
   auditLogs,
+  categories,
   notifications,
   orderItems,
   orderStatusHistory,
@@ -71,6 +72,48 @@ router.get("/admin/orders", async (context) => {
     return { ...row, paymentStatus: payment?.status ?? null, paymentSimulation: payment?.providerStatus?.startsWith("admin_simulated_") ?? false };
   });
   return context.json({ data });
+});
+
+router.get("/admin/products", async (context) => {
+  const auth = await requireAdmin(context);
+  if ("error" in auth) return auth.error;
+  const data = await getDb().select({
+    id: products.id, reference: products.reference, name: products.name,
+    status: products.status, priceFCFA: products.priceFCFA,
+    stockPhysical: products.stockPhysical, lowStockThreshold: products.lowStockThreshold,
+    categoryName: categories.name,
+  }).from(products).innerJoin(categories, eq(products.categoryId, categories.id))
+    .orderBy(asc(products.name)).limit(200);
+  return context.json({ data });
+});
+
+router.post("/admin/products/:id/stock-adjustments", async (context) => {
+  const auth = await requireAdmin(context);
+  if ("error" in auth) return auth.error;
+  const body = await context.req.json().catch(() => null) as { variation?: unknown; reason?: unknown } | null;
+  const variation = body?.variation;
+  const reason = typeof body?.reason === "string" ? body.reason.trim() : "";
+  if (typeof variation !== "number" || !Number.isInteger(variation) || variation === 0 || Math.abs(variation) > 100_000 || reason.length < 5 || reason.length > 300) {
+    return fail(context, 400, "DONNEES_INVALIDES", "Saisissez un ajustement entier non nul et un motif d’au moins 5 caractères.");
+  }
+  const productId = context.req.param("id");
+  const result = await getDb().transaction(async (tx) => {
+    const [product] = await tx.select({ id: products.id, name: products.name, stock: products.stockPhysical, threshold: products.lowStockThreshold })
+      .from(products).where(eq(products.id, productId)).for("update");
+    if (!product) return { error: { status: 404 as const, code: "INTROUVABLE", message: "Ce produit n’existe pas." } };
+    const stockAfter = product.stock + variation;
+    if (stockAfter < 0) return { error: { status: 409 as const, code: "STOCK_NEGATIF", message: "Cet ajustement rendrait le stock négatif." } };
+    const now = new Date();
+    await tx.update(products).set({ stockPhysical: stockAfter, updatedAt: now }).where(eq(products.id, productId));
+    await tx.insert(stockMovements).values({ productId, type: "adjustment", variation, stockBefore: product.stock, stockAfter, authorId: auth.user.id, reason });
+    await tx.insert(auditLogs).values({ actorId: auth.user.id, action: "product.stock.adjusted", entityType: "product", entityId: productId, metadata: { variation, stockBefore: product.stock, stockAfter, reason } });
+    if (product.stock > product.threshold && stockAfter <= product.threshold) {
+      await tx.insert(notifications).values({ userId: auth.user.id, type: "low_stock", title: "Stock faible", message: `${product.name} est sous le seuil de stock (${stockAfter}).`, link: "/admin", idempotencyKey: `low-stock:${productId}:${now.getTime()}` });
+    }
+    return { data: { productId, stockBefore: product.stock, stockAfter } };
+  });
+  if ("error" in result && result.error) return fail(context, result.error.status, result.error.code, result.error.message);
+  return context.json(result);
 });
 
 router.post("/admin/orders/:id/advance", async (context) => {

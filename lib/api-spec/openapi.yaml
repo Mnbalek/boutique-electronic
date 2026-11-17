@@ -667,6 +667,63 @@ paths:
               schema: { $ref: "#/components/schemas/AdminOrdersResponse" }
         "401": { description: Authentication required }
         "403": { description: Administrator role required }
+  /admin/products:
+    get:
+      operationId: getAdminProducts
+      tags: [administration]
+      summary: List products for stock management
+      responses:
+        "200":
+          description: Products and stock levels
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string, format: uuid }
+                        reference: { type: string }
+                        name: { type: string }
+                        status: { type: string }
+                        priceFCFA: { type: integer }
+                        stockPhysical: { type: integer }
+                        lowStockThreshold: { type: integer }
+                        categoryName: { type: string }
+                      required: [id, reference, name, status, priceFCFA, stockPhysical, lowStockThreshold, categoryName]
+                required: [data]
+        "401": { description: Authentication required }
+        "403": { description: Administrator role required }
+  /admin/products/{id}/stock-adjustments:
+    post:
+      operationId: adjustAdminProductStock
+      tags: [administration]
+      summary: Apply an audited stock adjustment with a reason
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                variation: { type: integer, not: { const: 0 } }
+                reason: { type: string, minLength: 5, maxLength: 300 }
+              required: [variation, reason]
+      responses:
+        "200": { description: Stock adjusted }
+        "400": { description: Invalid adjustment or missing reason }
+        "401": { description: Authentication required }
+        "403": { description: Administrator role required }
+        "404": { description: Product not found }
+        "409": { description: Adjustment would result in negative stock }
   /admin/orders/{id}/advance:
     post:
       operationId: advanceAdminOrder

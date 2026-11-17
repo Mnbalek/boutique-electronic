@@ -97,7 +97,7 @@ Le cahier v1.3 prescrit React/Vite, Netlify Functions avec Hono et Neon PostgreS
 - Gérer produits, catégories, images, prix, stocks et mouvements, commandes, clients, promotions, paiements simulés, remboursements, zones de livraison, bannières et paramètres.
 - Ajouter tableau de bord, notifications de stock bas et journal d’audit immuable.
 
-**Avancement :** première tranche en cours : espace protégé, indicateurs, liste des commandes, simulation succès/refus avec stock, historique, notification et audit; progression contrôlée de confirmed à delivered. La gestion des produits, catégories, images, ajustements manuels, clients, promotions, remboursements, zones, bannières, paramètres et notifications de stock bas reste à réaliser.
+**Avancement :** première tranche livrée : espace protégé, indicateurs, liste des commandes, simulation succès/refus avec stock, historique, notification et audit; progression contrôlée de confirmed à delivered; ajustements manuels de stock avec motif et journalisation. La gestion complète des produits et catégories, images, clients, promotions, remboursements, zones, bannières et paramètres reste à réaliser.
 
 **Recette associée :** BF29–BF40, BF50–BF55 et scénarios RC33–RC40, RC44–RC45.
 
