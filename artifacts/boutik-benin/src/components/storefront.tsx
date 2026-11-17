@@ -15,7 +15,7 @@ import {
   getGetAddressesQueryKey, getGetOrderPaymentStatusQueryKey, getGetNotificationsQueryKey, getGetPaymentConfigQueryKey,
   getGetUnreadNotificationCountQueryKey,
 } from '@workspace/api-client-react';
-import type { Product, GetProductsParams, Address, Order } from '@workspace/api-client-react';
+import type { Product, GetProductsParams, Address, Order, CartResponse } from '@workspace/api-client-react';
 import {
   ArrowLeft, ArrowRight, Bell, Check, ChevronDown, CircleHelp, Heart, LockKeyhole,
   Menu, Minus, Package, Plus, Search, ShieldCheck, ShoppingBag, ShoppingCart, Truck, UserRound, X,
@@ -55,6 +55,37 @@ const readGuest = (): GuestCart => {
   } catch { return {}; }
 };
 const saveGuest = (data: GuestCart) => localStorage.setItem('boutik-panier-invite', JSON.stringify(data));
+
+type CartLine = CartResponse['data']['items'][number];
+const emptyCart: CartResponse = { data: { items: [], subtotalFCFA: 0, itemCount: 0, hasChanges: false } };
+
+function makeCartResponse(items: CartLine[]): CartResponse {
+  return { data: {
+    items,
+    subtotalFCFA: items.reduce((sum, line) => sum + line.lineTotalFCFA, 0),
+    itemCount: items.reduce((sum, line) => sum + line.quantity, 0),
+    hasChanges: items.some((line) => line.priceChanged || !line.product.available || line.quantity > line.product.stock),
+  } };
+}
+
+function optimisticallySetCartLine(current: CartResponse | undefined, product: Product, quantity: number): CartResponse {
+  const items = current?.data.items ?? [];
+  const line: CartLine = {
+    productId: product.id,
+    product,
+    quantity,
+    previousPriceFCFA: null,
+    priceChanged: false,
+    lineTotalFCFA: product.priceFCFA * quantity,
+  };
+  const index = items.findIndex((item) => item.productId === product.id);
+  const nextItems = index < 0 ? [...items, line] : items.map((item, itemIndex) => itemIndex === index ? line : item);
+  return makeCartResponse(nextItems);
+}
+
+function optimisticallyRemoveCartLine(current: CartResponse | undefined, productId: string): CartResponse {
+  return makeCartResponse((current?.data.items ?? []).filter((item) => item.productId !== productId));
+}
 
 function Retry({ onClick }: { onClick: () => void }) {
   return <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-900" data-testid="status-error"><p className="font-semibold">Le contenu n’a pas pu être chargé.</p><p className="mt-1 text-red-800">Vérifiez votre connexion et réessayez.</p><button onClick={onClick} className="btn btn-sm btn-outline mt-3" data-testid="button-retry">Réessayer</button></div>;
@@ -276,17 +307,23 @@ function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
 }
 
 function CartPage({ isGuest, setGuest }: {isGuest:boolean;setGuest:(x:GuestCart)=>void}) {
-  const [,go]=useLocation(); const cartQ=useGetCart({query:{enabled:!isGuest,queryKey:getGetCartQueryKey()}}); const guest=readGuest();
-  const setItem=useSetCartItem();const remove=useRemoveCartItem();const clear=useClearCart();
+  const [,go]=useLocation(); const queryClient=useQueryClient(); const cartKey=getGetCartQueryKey();
+  const cartQ=useGetCart({query:{enabled:!isGuest,queryKey:cartKey}}); const guest=readGuest();
+  const syncCart=(response:CartResponse)=>queryClient.setQueryData(cartKey,response);
+  const refreshCart=()=>{void queryClient.invalidateQueries({queryKey:cartKey});};
+  const setItem=useSetCartItem({mutation:{onSuccess:syncCart,onError:refreshCart}});
+  const remove=useRemoveCartItem({mutation:{onSuccess:syncCart,onError:refreshCart}});
+  const clear=useClearCart({mutation:{onSuccess:syncCart,onError:refreshCart}});
   const entries=cartQ.data?.data?.items||[];
   if(!isGuest&&cartQ.isLoading)return <Loading/>;
   if(!isGuest&&cartQ.isError)return <Retry onClick={()=>void cartQ.refetch()}/>;
   if((isGuest?Object.keys(guest).length===0:entries.length===0))return <Empty title="Votre panier est vide" text="Parcourez la boutique et ajoutez les articles qui vous intéressent." />;
-  const update=(id:string,q:number,price:number,stock:number,productId=id)=>{if(stock<1)return;const next=Math.max(1,Math.min(10,stock,Math.floor(q)));if(isGuest){const n={...guest,[id]:{productId,quantity:next,lastSeenPriceFCFA:price}};saveGuest(n);setGuest(n);}else setItem.mutate({productId:id,data:{quantity:next,lastSeenPriceFCFA:price}} as never);};
-  const erase=(id:string)=>{if(isGuest){const n={...guest};delete n[id];saveGuest(n);setGuest(n);}else remove.mutate({productId:id});};
+  const update=(id:string,q:number,price:number,stock:number,productId=id)=>{if(stock<1)return;const next=Math.max(1,Math.min(10,stock,Math.floor(q)));if(isGuest){const n={...guest,[id]:{productId,quantity:next,lastSeenPriceFCFA:price}};saveGuest(n);setGuest(n);}else{const line=cartQ.data?.data.items.find(item=>item.productId===id);if(line)queryClient.setQueryData(cartKey,(current:CartResponse|undefined)=>optimisticallySetCartLine(current,line.product,next));setItem.mutate({productId:id,data:{quantity:next,lastSeenPriceFCFA:price}} as never);}};
+  const erase=(id:string)=>{if(isGuest){const n={...guest};delete n[id];saveGuest(n);setGuest(n);}else{queryClient.setQueryData(cartKey,(current:CartResponse|undefined)=>optimisticallyRemoveCartLine(current,id));remove.mutate({productId:id});}};
+  const emptyCustomerCart=()=>{if(isGuest){saveGuest({});setGuest({});}else{queryClient.setQueryData(cartKey,emptyCart);clear.mutate(undefined);}};
   return <div data-testid="page-cart"><h1 className="font-display text-3xl font-semibold">Votre panier</h1><p className="mt-2 text-sm text-slate-600">{isGuest?'Panier invité enregistré sur cet appareil.':'Panier synchronisé à votre compte.'}</p>
     <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]"><section className="space-y-3">{isGuest?Object.entries(guest).map(([slug,item])=><GuestLine key={slug} slug={slug} qty={item.quantity} onUpdate={(p,q)=>update(slug,q,p.priceFCFA,p.stock,p.id)} onRemove={()=>erase(slug)}/>):entries.map(line=><article key={line.productId} className="flex gap-4 rounded-xl border bg-white p-3 sm:p-4" data-testid={`row-cart-${line.productId}`}><img className="h-24 w-24 rounded-lg object-cover" src={line.product.images[0]?.url} alt={line.product.images[0]?.alt||line.product.name}/><div className="min-w-0 flex-1"><Link href={`/produits/${line.product.slug}`} className="font-semibold" data-testid={`link-cart-product-${line.productId}`}>{line.product.name}</Link><p className="mt-1 text-sm text-slate-600">{money(line.product.priceFCFA)} · {line.product.stock} disponible(s)</p>{line.priceChanged&&<p className="text-xs font-semibold text-amber-800">Le prix a changé : vérifiez avant de continuer.</p>}<div className="mt-2 flex items-center gap-2"><button className="btn btn-ghost btn-xs" onClick={()=>update(line.productId,line.quantity-1,line.product.priceFCFA,line.product.stock)} aria-label="Diminuer la quantité" data-testid={`button-minus-${line.productId}`}><Minus size={14}/></button><span data-testid={`text-quantity-${line.productId}`}>{line.quantity}</span><button className="btn btn-ghost btn-xs" onClick={()=>update(line.productId,line.quantity+1,line.product.priceFCFA,line.product.stock)} aria-label="Augmenter la quantité" data-testid={`button-plus-${line.productId}`}><Plus size={14}/></button><button className="ml-auto text-xs font-semibold text-red-800 underline" onClick={()=>erase(line.productId)} data-testid={`button-remove-${line.productId}`}>Retirer</button></div></div><strong className="whitespace-nowrap text-sm" data-testid={`text-line-total-${line.productId}`}>{money(line.lineTotalFCFA)}</strong></article>)}</section>
-      <aside className="h-fit rounded-xl border bg-white p-5"><h2 className="font-display text-lg font-semibold">Récapitulatif</h2><p className="mt-3 flex justify-between text-sm"><span>Sous-total</span><strong>{isGuest?'Calculé à la validation':money(cartQ.data?.data?.subtotalFCFA)}</strong></p><p className="mt-3 text-xs leading-5 text-slate-600">Les montants définitifs sont fournis lors de l’aperçu de commande.</p><button className="btn btn-primary mt-5 w-full" onClick={()=>go(isGuest?'/connexion?retour=commande':'/commande')} data-testid="button-continue-checkout">Continuer</button><button className="btn btn-ghost btn-sm mt-2 w-full" onClick={()=>isGuest?(saveGuest({}),setGuest({})):clear.mutate(undefined)} data-testid="button-clear-cart">Vider le panier</button></aside>
+      <aside className="h-fit rounded-xl border bg-white p-5"><h2 className="font-display text-lg font-semibold">Récapitulatif</h2><p className="mt-3 flex justify-between text-sm"><span>Sous-total</span><strong>{isGuest?'Calculé à la validation':money(cartQ.data?.data?.subtotalFCFA)}</strong></p><p className="mt-3 text-xs leading-5 text-slate-600">Les montants définitifs sont fournis lors de l’aperçu de commande.</p><button className="btn btn-primary mt-5 w-full" onClick={()=>go(isGuest?'/connexion?retour=commande':'/commande')} data-testid="button-continue-checkout">Continuer</button><button className="btn btn-ghost btn-sm mt-2 w-full" onClick={emptyCustomerCart} data-testid="button-clear-cart">Vider le panier</button></aside>
     </div>
   </div>;
 }
@@ -299,6 +336,7 @@ function GuestLine({slug,qty,onUpdate,onRemove}:{slug:string;qty:number;onUpdate
 }
 
 function CheckoutPage() {
+  const queryClient=useQueryClient();
   const addressQ=useGetAddresses(); const preview=usePreviewCheckout();
   const paymentConfig=useGetPaymentConfig({query:{queryKey:getGetPaymentConfigQueryKey(),staleTime:60_000}});
   const profile=useGetProfile();
@@ -310,7 +348,7 @@ function CheckoutPage() {
   const addresses=addressQ.data?.data||[];
   useEffect(()=>{if(!addressId&&addresses.length)setAddress(addresses.find(a=>a.isDefault)?.id||addresses[0].id);},[addressId,addresses]);
   const loadPreview=()=>{setMessage('');if(!addressId){setMessage('Choisissez une adresse de livraison.');return;}preview.mutate({data:{addressId,promotionCode:promotion||null}},{onError:()=>setMessage('Impossible de préparer le récapitulatif. Vérifiez votre adresse et réessayez.')});};
-  const sendOrder=async()=>{setMessage('');if(!addressId){setMessage('Choisissez une adresse avant de continuer.');return;}if(paymentConfig.data?.data.mode==='sandbox'&&!paymentConfig.data.data.enabled){setMessage('Kkiapay Sandbox doit être configuré avec les clés de test avant les paiements.');return;}let createdOrderId='';let reference='';try{const created=await order.mutateAsync({data:{addressId,promotionCode:promotion||null}} as never);createdOrderId=created.data.id;reference=created.data.reference;const attempt=await pay.mutateAsync({id:createdOrderId});if(paymentConfig.data?.data.mode==='sandbox'){const widget=paymentConfig.data.data;if(!widget.enabled||!widget.publicKey)throw new Error('Le paiement Kkiapay Sandbox n’est pas encore configuré.');const result=await openKkiapayPayment({publicKey:widget.publicKey,sandbox:true},{amount:attempt.data.amountFCFA,partnerId:attempt.data.partnerId||'',orderReference:reference,customerName:[profile.data?.data?.firstName,profile.data?.data?.lastName].filter(Boolean).join(' '),email:profile.data?.data?.email,phone:profile.data?.data?.phone});await verify.mutateAsync({data:{orderId:createdOrderId,paymentAttemptId:attempt.data.id,transactionId:result.transactionId}});window.location.assign(`/commande/${createdOrderId}/verification`);return;}window.location.assign(`/commande/${createdOrderId}/verification`);}catch(e){if(createdOrderId){if(e instanceof Error&&e.message)sessionStorage.setItem(`payment-message:${createdOrderId}`,e.message);window.location.assign(`/commande/${createdOrderId}/verification`);return;}const apiError=e as {data?:{error?:{code?:string;message?:string}}};const code=apiError.data?.error?.code||'';const msgs:Record<string,string>={STOCK_INSUFFISANT:'Un article n’est plus disponible dans la quantité demandée.',PANIER_MODIFIE:'Le panier, le prix ou le stock a changé. Actualisez le panier avant de réessayer.',PANIER_VIDE:'Votre panier est vide. Ajoutez des articles avant de commander.',COMMANDE_EN_ATTENTE:'Une commande est déjà en attente de paiement. Reprenez-la depuis vos commandes.',ZONE_NON_DESSERVIE:'Cette zone de livraison n’est pas desservie.',PROMOTION_INVALIDE:'Ce code promotionnel n’est pas valide.',CLE_IDEMPOTENCE_INVALIDE:'La demande doit être relancée. Actualisez la page puis réessayez.',DONNEES_INVALIDES:'Vérifiez l’adresse et le code promotionnel.',KKIAPAY_SANDBOX_NON_CONFIGURE:'Kkiapay Sandbox doit être configuré avec les clés de test dans Netlify.',PAIEMENT_INDISPONIBLE:'Le paiement est indisponible pour le moment.'};setMessage(msgs[code]||apiError.data?.error?.message||(e instanceof Error?e.message:'La commande n’a pas pu être créée. Vérifiez les informations puis réessayez.'));}};
+  const sendOrder=async()=>{setMessage('');if(!addressId){setMessage('Choisissez une adresse avant de continuer.');return;}if(paymentConfig.data?.data.mode==='sandbox'&&!paymentConfig.data.data.enabled){setMessage('Kkiapay Sandbox doit être configuré avec les clés de test avant les paiements.');return;}let createdOrderId='';let reference='';try{const created=await order.mutateAsync({data:{addressId,promotionCode:promotion||null}} as never);createdOrderId=created.data.id;reference=created.data.reference;queryClient.setQueryData(getGetCartQueryKey(),emptyCart);const attempt=await pay.mutateAsync({id:createdOrderId});if(paymentConfig.data?.data.mode==='sandbox'){const widget=paymentConfig.data.data;if(!widget.enabled||!widget.publicKey)throw new Error('Le paiement Kkiapay Sandbox n’est pas encore configuré.');const result=await openKkiapayPayment({publicKey:widget.publicKey,sandbox:true},{amount:attempt.data.amountFCFA,partnerId:attempt.data.partnerId||'',orderReference:reference,customerName:[profile.data?.data?.firstName,profile.data?.data?.lastName].filter(Boolean).join(' '),email:profile.data?.data?.email,phone:profile.data?.data?.phone});await verify.mutateAsync({data:{orderId:createdOrderId,paymentAttemptId:attempt.data.id,transactionId:result.transactionId}});window.location.assign(`/commande/${createdOrderId}/verification`);return;}window.location.assign(`/commande/${createdOrderId}/verification`);}catch(e){if(createdOrderId){if(e instanceof Error&&e.message)sessionStorage.setItem(`payment-message:${createdOrderId}`,e.message);window.location.assign(`/commande/${createdOrderId}/verification`);return;}const apiError=e as {data?:{error?:{code?:string;message?:string}}};const code=apiError.data?.error?.code||'';const msgs:Record<string,string>={STOCK_INSUFFISANT:'Un article n’est plus disponible dans la quantité demandée.',PANIER_MODIFIE:'Le panier, le prix ou le stock a changé. Actualisez le panier avant de réessayer.',PANIER_VIDE:'Votre panier est vide. Ajoutez des articles avant de commander.',COMMANDE_EN_ATTENTE:'Une commande est déjà en attente de paiement. Reprenez-la depuis vos commandes.',ZONE_NON_DESSERVIE:'Cette zone de livraison n’est pas desservie.',PROMOTION_INVALIDE:'Ce code promotionnel n’est pas valide.',CLE_IDEMPOTENCE_INVALIDE:'La demande doit être relancée. Actualisez la page puis réessayez.',DONNEES_INVALIDES:'Vérifiez l’adresse et le code promotionnel.',KKIAPAY_SANDBOX_NON_CONFIGURE:'Kkiapay Sandbox doit être configuré avec les clés de test dans Netlify.',PAIEMENT_INDISPONIBLE:'Le paiement est indisponible pour le moment.'};setMessage(msgs[code]||apiError.data?.error?.message||(e instanceof Error?e.message:'La commande n’a pas pu être créée. Vérifiez les informations puis réessayez.'));}};
   if(addressQ.isLoading)return <Loading/>;
   if(addressQ.isError)return <Retry onClick={()=>void addressQ.refetch()}/>;
   return <div className="mx-auto max-w-4xl" data-testid="page-checkout"><p className="eyebrow">Dernière étape</p><h1 className="font-display text-3xl font-semibold">Valider votre commande</h1>
@@ -400,10 +438,12 @@ function ContactPage(){const [sent,setSent]=useState(false);return <div classNam
 function NotFound(){return <div className="mx-auto max-w-xl py-16 text-center" data-testid="page-not-found"><p className="eyebrow">Erreur 404</p><h1 className="font-display text-4xl font-semibold">Cette page est introuvable.</h1><p className="mt-3 text-slate-600">Le lien est peut-être incorrect ou la page a été déplacée.</p><Link href="/" className="btn btn-primary mt-6" data-testid="link-not-found-home">Retour à l’accueil</Link></div>}
 
 export default function Storefront(){
- const [location]=useLocation();const current=useGetCurrentUser({query:{queryKey:getGetCurrentUserQueryKey(),retry:false}});const cart=useGetCart({query:{enabled:!!current.data?.data,queryKey:getGetCartQueryKey()}});const {toast}=useToast();
+ const [location]=useLocation();const queryClient=useQueryClient();const current=useGetCurrentUser({query:{queryKey:getGetCurrentUserQueryKey(),retry:false}});const cartKey=getGetCartQueryKey();const {toast}=useToast();
  const [guest,setGuestState]=useState<GuestCart>(readGuest);const setGuest=(x:GuestCart)=>{saveGuest(x);setGuestState(x);};
- const setItem=useSetCartItem();
- const add=(p:Product,requestedQuantity=1)=>{const maxQuantity=Math.min(10,p.stock);if(!p.available||maxQuantity<1)return;const increment=Math.max(1,Math.floor(requestedQuantity));if(current.data?.data){const existing=cart.data?.data?.items.find(item=>item.productId===p.id)?.quantity||0;const quantity=Math.min(maxQuantity,existing+increment);setItem.mutate({productId:p.id,data:{quantity,lastSeenPriceFCFA:p.priceFCFA}} as never,{onSuccess:()=>toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`}),onError:()=>toast({title:'Ajout impossible',description:'L’article n’a pas pu être ajouté. Réessayez.',variant:'destructive'})});}else{const guestCart=readGuest();const quantity=Math.min(maxQuantity,(guestCart[p.slug]?.quantity||0)+increment);guestCart[p.slug]={productId:p.id,quantity,lastSeenPriceFCFA:p.priceFCFA};setGuest(guestCart);toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`});}};
+ const syncCart=(response:CartResponse)=>queryClient.setQueryData(cartKey,response);
+ const refreshCart=()=>{void queryClient.invalidateQueries({queryKey:cartKey});};
+ const setItem=useSetCartItem({mutation:{onSuccess:syncCart,onError:refreshCart}});
+ const add=(p:Product,requestedQuantity=1)=>{const maxQuantity=Math.min(10,p.stock);if(!p.available||maxQuantity<1)return;const increment=Math.max(1,Math.floor(requestedQuantity));if(current.data?.data){const cached=queryClient.getQueryData<CartResponse>(cartKey);const existing=cached?.data.items.find(item=>item.productId===p.id)?.quantity||0;const quantity=Math.min(maxQuantity,existing+increment);queryClient.setQueryData(cartKey,optimisticallySetCartLine(cached,p,quantity));setItem.mutate({productId:p.id,data:{quantity,lastSeenPriceFCFA:p.priceFCFA}} as never,{onError:()=>toast({title:'Ajout impossible',description:'L’article n’a pas pu être ajouté. Réessayez.',variant:'destructive'})});toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`});}else{const guestCart=readGuest();const quantity=Math.min(maxQuantity,(guestCart[p.slug]?.quantity||0)+increment);guestCart[p.slug]={productId:p.id,quantity,lastSeenPriceFCFA:p.priceFCFA};setGuest(guestCart);toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`});}};
  if(location.startsWith('/admin'))return <AdminPage isAdmin={current.data?.data?.role==='admin'} isCheckingAccess={current.isLoading} user={current.data?.data?{firstName:current.data.data.firstName,lastName:current.data.data.lastName,email:current.data.data.email}:undefined}/>;
  return <StoreShell><Switch>
   <Route path="/"><HomePage add={add}/></Route>
