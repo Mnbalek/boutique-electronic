@@ -7,14 +7,12 @@
  */
 
 export type GetOrdersParams = {
-statut?: string;
-/**
- * @minimum 1
- */
-page?: number;
-/**
- * @minimum 1
- * @maximum 48
- */
-taille?: number;
+  statut?: string;
+  /** @minimum 1 */
+  page?: number;
+  /**
+   * @minimum 1
+   * @maximum 48
+   */
+  taille?: number;
 };

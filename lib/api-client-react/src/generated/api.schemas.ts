@@ -541,6 +541,8 @@ export interface PaymentAttempt {
   status: PaymentAttemptStatus;
   /** @nullable */
   paymentUrl?: string | null;
+  /** @nullable */
+  partnerId?: string | null;
   createdAt: string;
 }
 
@@ -574,6 +576,32 @@ export interface PaymentStatusResponse {
 export interface PaymentVerificationInput {
   orderId: string;
   paymentAttemptId: string;
+  /**
+     * @minLength 1
+     * @maxLength 160
+     */
+  transactionId: string;
+}
+
+export type PaymentConfigMode = typeof PaymentConfigMode[keyof typeof PaymentConfigMode];
+
+
+export const PaymentConfigMode = {
+  mock: 'mock',
+  sandbox: 'sandbox',
+  production: 'production',
+} as const;
+
+export interface PaymentConfig {
+  mode: PaymentConfigMode;
+  enabled: boolean;
+  /** @nullable */
+  publicKey: string | null;
+  sandbox: boolean;
+}
+
+export interface PaymentConfigResponse {
+  data: PaymentConfig;
 }
 
 export interface Receipt {
@@ -611,28 +639,73 @@ export interface UnreadCountResponse {
   data: UnreadCountResponseData;
 }
 
+export type AdminOverviewResponseData = {
+  ordersPendingPayment: number;
+  ordersToPrepare: number;
+  ordersShipped: number;
+  products: number;
+  lowStockProducts: number;
+  customers: number;
+  simulatedRevenueFCFA: number;
+  paymentMode: 'simulation';
+};
+
+export interface AdminOverviewResponse {
+  data: AdminOverviewResponseData;
+}
+
+export type AdminOrdersResponseDataItem = {
+  id: string;
+  reference: string;
+  status: string;
+  totalFCFA: number;
+  createdAt: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  /** @nullable */
+  paymentStatus: string | null;
+  paymentSimulation: boolean;
+};
+
+export interface AdminOrdersResponse {
+  data: AdminOrdersResponseDataItem[];
+}
+
+export type AdminPaymentSimulationResponseDataOutcome = typeof AdminPaymentSimulationResponseDataOutcome[keyof typeof AdminPaymentSimulationResponseDataOutcome];
+
+
+export const AdminPaymentSimulationResponseDataOutcome = {
+  succeeded: 'succeeded',
+  failed: 'failed',
+} as const;
+
+export type AdminPaymentSimulationResponseData = {
+  orderId: string;
+  outcome: AdminPaymentSimulationResponseDataOutcome;
+  simulated: true;
+};
+
+export interface AdminPaymentSimulationResponse {
+  data: AdminPaymentSimulationResponseData;
+}
+
 export type GetProductsParams = {
-q?: string;
-categorie?: string;
-/**
- * @minimum 0
- */
-prix_min?: number;
-/**
- * @minimum 0
- */
-prix_max?: number;
-disponible?: boolean;
-tri?: GetProductsTri;
-/**
- * @minimum 1
- */
-page?: number;
-/**
- * @minimum 1
- * @maximum 48
- */
-taille?: number;
+  q?: string;
+  categorie?: string;
+  /** @minimum 0 */
+  prix_min?: number;
+  /** @minimum 0 */
+  prix_max?: number;
+  disponible?: boolean;
+  tri?: GetProductsTri;
+  /** @minimum 1 */
+  page?: number;
+  /**
+   * @minimum 1
+   * @maximum 48
+   */
+  taille?: number;
 };
 
 export type GetProductsTri = typeof GetProductsTri[keyof typeof GetProductsTri];
@@ -647,35 +720,85 @@ export const GetProductsTri = {
 } as const;
 
 export type GetCommunesParams = {
-departement_id?: string;
+  departement_id?: string;
 };
 
 export type GetDeliveryQuoteParams = {
-commune_id: string;
+  commune_id: string;
 };
 
 export type GetOrdersParams = {
-statut?: string;
-/**
- * @minimum 1
- */
-page?: number;
-/**
- * @minimum 1
- * @maximum 48
- */
-taille?: number;
+  statut?: string;
+  /** @minimum 1 */
+  page?: number;
+  /**
+   * @minimum 1
+   * @maximum 48
+   */
+  taille?: number;
 };
 
 export type GetNotificationsParams = {
-/**
- * @minimum 1
- */
-page?: number;
-/**
- * @minimum 1
- * @maximum 48
- */
-taille?: number;
+  /** @minimum 1 */
+  page?: number;
+  /**
+   * @minimum 1
+   * @maximum 48
+   */
+  taille?: number;
+};
+
+export type GetAdminProducts200DataItem = {
+  id: string;
+  reference: string;
+  name: string;
+  status: string;
+  priceFCFA: number;
+  stockPhysical: number;
+  lowStockThreshold: number;
+  categoryName: string;
+};
+
+export type GetAdminProducts200 = {
+  data: GetAdminProducts200DataItem[];
+};
+
+export type AdjustAdminProductStockBody = {
+  variation: number;
+  /**
+     * @minLength 5
+     * @maxLength 300
+     */
+  reason: string;
+};
+
+export type AdvanceAdminOrder200DataStatus = typeof AdvanceAdminOrder200DataStatus[keyof typeof AdvanceAdminOrder200DataStatus];
+
+
+export const AdvanceAdminOrder200DataStatus = {
+  preparing: 'preparing',
+  shipped: 'shipped',
+  delivered: 'delivered',
+} as const;
+
+export type AdvanceAdminOrder200Data = {
+  orderId: string;
+  status: AdvanceAdminOrder200DataStatus;
+};
+
+export type AdvanceAdminOrder200 = {
+  data: AdvanceAdminOrder200Data;
+};
+
+export type SimulateAdminPaymentBodyOutcome = typeof SimulateAdminPaymentBodyOutcome[keyof typeof SimulateAdminPaymentBodyOutcome];
+
+
+export const SimulateAdminPaymentBodyOutcome = {
+  succeeded: 'succeeded',
+  failed: 'failed',
+} as const;
+
+export type SimulateAdminPaymentBody = {
+  outcome: SimulateAdminPaymentBodyOutcome;
 };
 

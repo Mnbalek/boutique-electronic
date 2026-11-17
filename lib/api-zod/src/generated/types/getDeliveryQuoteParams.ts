@@ -7,5 +7,5 @@
  */
 
 export type GetDeliveryQuoteParams = {
-commune_id: string;
+  commune_id: string;
 };

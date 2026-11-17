@@ -8,25 +8,19 @@
 import type { GetProductsTri } from './getProductsTri';
 
 export type GetProductsParams = {
-q?: string;
-categorie?: string;
-/**
- * @minimum 0
- */
-prix_min?: number;
-/**
- * @minimum 0
- */
-prix_max?: number;
-disponible?: boolean;
-tri?: GetProductsTri;
-/**
- * @minimum 1
- */
-page?: number;
-/**
- * @minimum 1
- * @maximum 48
- */
-taille?: number;
+  q?: string;
+  categorie?: string;
+  /** @minimum 0 */
+  prix_min?: number;
+  /** @minimum 0 */
+  prix_max?: number;
+  disponible?: boolean;
+  tri?: GetProductsTri;
+  /** @minimum 1 */
+  page?: number;
+  /**
+   * @minimum 1
+   * @maximum 48
+   */
+  taille?: number;
 };

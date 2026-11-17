@@ -17,5 +17,7 @@ export interface PaymentAttempt {
   status: PaymentAttemptStatus;
   /** @nullable */
   paymentUrl?: string | null;
+  /** @nullable */
+  partnerId?: string | null;
   createdAt: Date;
 }

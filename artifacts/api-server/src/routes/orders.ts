@@ -4,6 +4,7 @@ import {
   CreateOrderBody,
   CreateOrderHeader,
   CreateOrderResponse,
+  GetPaymentConfigResponse,
   GetOrderPaymentStatusResponse,
   GetOrderResponse,
   GetOrdersQueryParams,
@@ -11,6 +12,8 @@ import {
   PreviewCheckoutBody,
   PreviewCheckoutResponse,
   RetryOrderPaymentResponse,
+  VerifyPaymentBody,
+  VerifyPaymentResponse,
 } from "@workspace/api-zod";
 import { getDb } from "@workspace/db";
 import {
@@ -40,10 +43,12 @@ import { Hono, type Context } from "hono";
 import { getAuthenticatedUser } from "./auth";
 import { getPaymentMode } from "../payment-config";
 import { cleanProductName } from "../product-names";
+import { getKkiapayPublicConfig } from "../kkiapay";
+import { hasValidKkiapayWebhookSecret, resolveKkiapayPartner, verifyAndSettleKkiapay } from "../payment-settlement";
 
 const router = new Hono();
 const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-const fail = (context: Context, status: 400 | 401 | 404 | 409 | 422 | 500, code: string, message: string, details?: Record<string, unknown>) =>
+const fail = (context: Context, status: 400 | 401 | 404 | 409 | 422 | 500 | 503, code: string, message: string, details?: Record<string, unknown>) =>
   context.json({ error: { code, message, ...(details ? { details } : {}) } }, status);
 const availableStock = () => sql<number>`GREATEST(
   ${products.stockPhysical} - COALESCE((
@@ -412,11 +417,48 @@ router.get("/orders/:id", async (context) => {
   return context.json(GetOrderResponse.parse({ data }));
 });
 
+router.get("/payments/config", (context) => {
+  const config = getKkiapayPublicConfig();
+  return context.json(GetPaymentConfigResponse.parse({ data: config }));
+});
+
 router.post("/orders/:id/payments", async (context) => {
   const user = await getAuthenticatedUser(context);
   if (!user) return fail(context, 401, "NON_AUTHENTIFIE", "Une connexion est nécessaire.");
   const parsed = RetryOrderPaymentResponse.shape.data.shape.orderId.safeParse(context.req.param("id"));
   if (!parsed.success) return fail(context, 400, "PARAMETRE_INVALIDE", "Identifiant de commande invalide.");
+
+  const mode = getPaymentMode();
+  if (mode === "production") return fail(context, 503, "PAIEMENT_INDISPONIBLE", "Le paiement en production n’est pas activé sur cette boutique.");
+  if (mode === "sandbox") {
+    if (!getKkiapayPublicConfig().enabled) return fail(context, 503, "KKIAPAY_SANDBOX_NON_CONFIGURE", "Le paiement Kkiapay Sandbox n’est pas configuré. Contactez l’administrateur du site.");
+    const orderId = parsed.data;
+    const now = new Date();
+    const result = await getDb().transaction(async (tx) => {
+      const [order] = await tx.select().from(orders).where(and(eq(orders.id, orderId), eq(orders.userId, user.id))).for("update");
+      if (!order) return { error: { status: 404 as const, code: "COMMANDE_INTROUVABLE", message: "Commande introuvable." } };
+      if (order.status !== "pending_payment" || !order.expiresAt || order.expiresAt <= now) {
+        return { error: { status: 409 as const, code: "COMMANDE_NON_PAYABLE", message: "Cette commande n’est plus payable." } };
+      }
+      const [latest] = await tx.select().from(paymentAttempts).where(eq(paymentAttempts.orderId, orderId))
+        .orderBy(desc(paymentAttempts.createdAt)).limit(1).for("update");
+      if (latest?.status === "pending" && latest.mode === "sandbox") return { payment: latest, reused: true as const };
+      if (latest && latest.status !== "failed" && latest.status !== "expired") {
+        return { error: { status: 409 as const, code: "TENTATIVE_NON_RENOUVELABLE", message: "Une tentative de paiement est déjà en cours ou nécessite une vérification manuelle." } };
+      }
+      const payment = await tx.insert(paymentAttempts).values({
+        orderId, internalReference: `BB-${order.reference}-${randomUUID()}`, amountFCFA: order.totalFCFA,
+        currency: order.currency, mode: "sandbox", status: "pending", providerStatus: "sandbox_initialized",
+      }).returning().then((rows) => rows[0]);
+      return { payment, reused: false as const };
+    });
+    if ("error" in result && result.error) return fail(context, result.error.status, result.error.code, result.error.message);
+    const paymentResponse = RetryOrderPaymentResponse.parse({ data: {
+      id: result.payment.id, orderId, amountFCFA: result.payment.amountFCFA, currency: result.payment.currency,
+      status: "pending", paymentUrl: null, partnerId: result.payment.internalReference, createdAt: result.payment.createdAt,
+    } });
+    return context.json(paymentResponse, result.reused ? 200 : 201);
+  }
 
   const orderId = parsed.data;
   const now = new Date();
@@ -496,6 +538,49 @@ router.post("/orders/:id/payments", async (context) => {
     status: "succeeded", paymentUrl: null, createdAt: result.payment.createdAt,
   } });
   return context.json(data, result.alreadyPaid ? 200 : 201);
+});
+
+router.post("/payments/verify", async (context) => {
+  const user = await getAuthenticatedUser(context);
+  if (!user) return fail(context, 401, "NON_AUTHENTIFIE", "Une connexion est nécessaire.");
+  if (getPaymentMode() !== "sandbox") return fail(context, 409, "MODE_PAIEMENT_INACTIF", "La vérification Kkiapay Sandbox n’est pas active.");
+  const parsed = VerifyPaymentBody.safeParse(await context.req.json().catch(() => null));
+  if (!parsed.success) return fail(context, 400, "DONNEES_INVALIDES", "La référence de transaction est invalide.");
+  const [ownedOrder] = await getDb().select({ id: orders.id }).from(orders)
+    .where(and(eq(orders.id, parsed.data.orderId), eq(orders.userId, user.id))).limit(1);
+  if (!ownedOrder) return fail(context, 404, "COMMANDE_INTROUVABLE", "Commande introuvable.");
+  const result = await verifyAndSettleKkiapay({ ...parsed.data, actorId: user.id, source: "return" });
+  if ("error" in result) return fail(context, result.error.status, result.error.code, result.error.message);
+  const paymentStatus = result.data.paymentStatus;
+  return context.json(VerifyPaymentResponse.parse({ data: {
+    orderId: result.data.orderId,
+    orderStatus: result.data.status,
+    paymentStatus,
+    verified: paymentStatus !== "pending",
+    updatedAt: new Date(),
+  } }));
+});
+
+router.post("/payments/kkiapay/webhook", async (context) => {
+  if (!hasValidKkiapayWebhookSecret(context.req.header("x-kkiapay-secret") ?? null)) {
+    return context.json({ error: { code: "SIGNATURE_WEBHOOK_INVALIDE", message: "Signature webhook invalide." } }, 401);
+  }
+  const body = await context.req.json().catch(() => null) as {
+    transactionId?: unknown; partnerId?: unknown; event?: unknown;
+  } | null;
+  if (typeof body?.transactionId !== "string" || typeof body.partnerId !== "string" ||
+    !["transaction.success", "transaction.failed"].includes(String(body.event))) {
+    return context.json({ error: { code: "EVENEMENT_WEBHOOK_INVALIDE", message: "Événement Kkiapay invalide." } }, 400);
+  }
+  const payment = await resolveKkiapayPartner(body.partnerId);
+  if (!payment) return context.json({ error: { code: "TENTATIVE_INTROUVABLE", message: "Tentative de paiement introuvable." } }, 404);
+  const result = await verifyAndSettleKkiapay({ orderId: payment.orderId, paymentAttemptId: payment.id,
+    transactionId: body.transactionId, source: "webhook" });
+  if ("error" in result) {
+    if (result.error.status === 503) return context.json({ error: { code: result.error.code, message: result.error.message } }, 503);
+    return context.json({ received: true, needsReconciliation: result.error.status === 409 || result.error.status === 422 });
+  }
+  return context.json({ received: true });
 });
 
 router.get("/orders/:id/payment-status", async (context) => {

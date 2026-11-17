@@ -1437,6 +1437,7 @@ export const RetryOrderPaymentResponse = zod.object({
   "currency": zod.enum(['XOF']),
   "status": zod.enum(['pending', 'succeeded', 'failed', 'expired', 'anomaly']),
   "paymentUrl": zod.string().url().nullish(),
+  "partnerId": zod.string().nullish(),
   "createdAt": zod.coerce.date()
 })
 })
@@ -1535,9 +1536,14 @@ export const GetOrderReceiptResponse = zod.object({
 /**
  * @summary Request independent server-side payment verification
  */
+export const verifyPaymentBodyTransactionIdMax = 160;
+
+
+
 export const VerifyPaymentBody = zod.object({
   "orderId": zod.string().uuid(),
-  "paymentAttemptId": zod.string().uuid()
+  "paymentAttemptId": zod.string().uuid(),
+  "transactionId": zod.string().min(1).max(verifyPaymentBodyTransactionIdMax)
 })
 
 export const VerifyPaymentResponse = zod.object({
@@ -1549,6 +1555,25 @@ export const VerifyPaymentResponse = zod.object({
   "updatedAt": zod.coerce.date()
 })
 })
+
+
+/**
+ * @summary Get public payment widget configuration
+ */
+export const GetPaymentConfigResponse = zod.object({
+  "data": zod.object({
+  "mode": zod.enum(['mock', 'sandbox', 'production']),
+  "enabled": zod.boolean(),
+  "publicKey": zod.string().nullable(),
+  "sandbox": zod.boolean()
+})
+})
+
+
+/**
+ * @summary Receive and verify Kkiapay transaction notifications
+ */
+export const ReceiveKkiapayWebhookResponse = zod.unknown()
 
 
 /**
@@ -1625,6 +1650,114 @@ export const MarkAllNotificationsReadResponse = zod.object({
   "data": zod.object({
   "success": zod.boolean(),
   "message": zod.string().optional()
+})
+})
+
+
+/**
+ * @summary Get administration dashboard metrics
+ */
+export const GetAdminOverviewResponse = zod.object({
+  "data": zod.object({
+  "ordersPendingPayment": zod.number().int(),
+  "ordersToPrepare": zod.number().int(),
+  "ordersShipped": zod.number().int(),
+  "products": zod.number().int(),
+  "lowStockProducts": zod.number().int(),
+  "customers": zod.number().int(),
+  "simulatedRevenueFCFA": zod.number().int(),
+  "paymentMode": zod.literal("simulation")
+})
+})
+
+
+/**
+ * @summary List recent orders for administration
+ */
+export const GetAdminOrdersResponse = zod.object({
+  "data": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "reference": zod.string(),
+  "status": zod.string(),
+  "totalFCFA": zod.number().int(),
+  "createdAt": zod.coerce.date(),
+  "firstName": zod.string(),
+  "lastName": zod.string(),
+  "email": zod.string().email(),
+  "paymentStatus": zod.string().nullable(),
+  "paymentSimulation": zod.boolean()
+}))
+})
+
+
+/**
+ * @summary List products for stock management
+ */
+export const GetAdminProductsResponse = zod.object({
+  "data": zod.array(zod.object({
+  "id": zod.string().uuid(),
+  "reference": zod.string(),
+  "name": zod.string(),
+  "status": zod.string(),
+  "priceFCFA": zod.number().int(),
+  "stockPhysical": zod.number().int(),
+  "lowStockThreshold": zod.number().int(),
+  "categoryName": zod.string()
+}))
+})
+
+
+/**
+ * @summary Apply an audited stock adjustment with a reason
+ */
+export const AdjustAdminProductStockParams = zod.object({
+  "id": zod.coerce.string().uuid()
+})
+
+export const adjustAdminProductStockBodyReasonMin = 5;
+export const adjustAdminProductStockBodyReasonMax = 300;
+
+
+
+export const AdjustAdminProductStockBody = zod.object({
+  "variation": zod.number().int(),
+  "reason": zod.string().min(adjustAdminProductStockBodyReasonMin).max(adjustAdminProductStockBodyReasonMax)
+})
+
+export const AdjustAdminProductStockResponse = zod.unknown()
+
+
+/**
+ * @summary Advance an order through an allowed fulfillment status
+ */
+export const AdvanceAdminOrderParams = zod.object({
+  "id": zod.coerce.string().uuid()
+})
+
+export const AdvanceAdminOrderResponse = zod.object({
+  "data": zod.object({
+  "orderId": zod.string().uuid(),
+  "status": zod.enum(['preparing', 'shipped', 'delivered'])
+})
+})
+
+
+/**
+ * @summary Record a clearly identified simulated payment outcome
+ */
+export const SimulateAdminPaymentParams = zod.object({
+  "id": zod.coerce.string().uuid()
+})
+
+export const SimulateAdminPaymentBody = zod.object({
+  "outcome": zod.enum(['succeeded', 'failed'])
+})
+
+export const SimulateAdminPaymentResponse = zod.object({
+  "data": zod.object({
+  "orderId": zod.string().uuid(),
+  "outcome": zod.enum(['succeeded', 'failed']),
+  "simulated": zod.literal(true)
 })
 })
 

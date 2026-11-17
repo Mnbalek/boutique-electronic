@@ -18,6 +18,7 @@ import {
 import { Hono, type Context } from "hono";
 import { getAuthenticatedUser } from "./auth";
 import { cleanProductName } from "../product-names";
+import { getPaymentMode } from "../payment-config";
 
 const router = new Hono();
 const fail = (context: Context, status: 400 | 401 | 403 | 404 | 409, code: string, message: string) =>
@@ -145,6 +146,7 @@ router.post("/admin/orders/:id/advance", async (context) => {
 router.post("/admin/orders/:id/simulate-payment", async (context) => {
   const auth = await requireAdmin(context);
   if ("error" in auth) return auth.error;
+  if (getPaymentMode() !== "mock") return fail(context, 409, "SIMULATION_PAIEMENT_DESACTIVEE", "La simulation admin est disponible uniquement en mode local mock.");
   const body = await context.req.json().catch(() => null) as { outcome?: unknown } | null;
   if (body?.outcome !== "succeeded" && body?.outcome !== "failed") return fail(context, 400, "DONNEES_INVALIDES", "Choisissez une issue de paiement simulée.");
   const outcome = body.outcome;

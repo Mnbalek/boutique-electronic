@@ -9,4 +9,9 @@
 export interface PaymentVerificationInput {
   orderId: string;
   paymentAttemptId: string;
+  /**
+     * @minLength 1
+     * @maxLength 160
+     */
+  transactionId: string;
 }

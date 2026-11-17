@@ -7,5 +7,5 @@
  */
 
 export type GetCommunesParams = {
-departement_id?: string;
+  departement_id?: string;
 };

@@ -14,6 +14,7 @@ tags:
   - name: customer
   - name: cart
   - name: orders
+  - name: payments
   - name: notifications
   - name: administration
 paths:
@@ -585,6 +586,26 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/PaymentStatusResponse" }
+  /payments/config:
+    get:
+      operationId: getPaymentConfig
+      tags: [payments]
+      summary: Get public payment widget configuration
+      responses:
+        "200":
+          description: Public payment configuration
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaymentConfigResponse" }
+  /payments/kkiapay/webhook:
+    post:
+      operationId: receiveKkiapayWebhook
+      tags: [payments]
+      summary: Receive and verify Kkiapay transaction notifications
+      responses:
+        "200": { description: Event acknowledged }
+        "400": { description: Invalid webhook event }
+        "401": { description: Invalid webhook signature }
   /notifications:
     get:
       operationId: getNotifications
@@ -1227,6 +1248,7 @@ components:
         currency: { type: string, enum: [XOF] }
         status: { type: string, enum: [pending, succeeded, failed, expired, anomaly] }
         paymentUrl: { type: ["string", "null"], format: uri }
+        partnerId: { type: ["string", "null"] }
         createdAt: { type: string, format: date-time }
       required: [id, orderId, amountFCFA, currency, status, createdAt]
     PaymentAttemptResponse:
@@ -1253,7 +1275,21 @@ components:
       properties:
         orderId: { type: string, format: uuid }
         paymentAttemptId: { type: string, format: uuid }
-      required: [orderId, paymentAttemptId]
+        transactionId: { type: string, minLength: 1, maxLength: 160 }
+      required: [orderId, paymentAttemptId, transactionId]
+    PaymentConfig:
+      type: object
+      properties:
+        mode: { type: string, enum: [mock, sandbox, production] }
+        enabled: { type: boolean }
+        publicKey: { type: [string, "null"] }
+        sandbox: { type: boolean }
+      required: [mode, enabled, publicKey, sandbox]
+    PaymentConfigResponse:
+      type: object
+      properties:
+        data: { $ref: "#/components/schemas/PaymentConfig" }
+      required: [data]
     Receipt:
       type: object
       properties:

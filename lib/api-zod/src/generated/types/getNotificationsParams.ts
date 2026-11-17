@@ -7,13 +7,11 @@
  */
 
 export type GetNotificationsParams = {
-/**
- * @minimum 1
- */
-page?: number;
-/**
- * @minimum 1
- * @maximum 48
- */
-taille?: number;
+  /** @minimum 1 */
+  page?: number;
+  /**
+   * @minimum 1
+   * @maximum 48
+   */
+  taille?: number;
 };
