@@ -17,6 +17,7 @@ import {
 } from "@workspace/db/schema";
 import { Hono, type Context } from "hono";
 import { getAuthenticatedUser } from "./auth";
+import { cleanProductName } from "../product-names";
 
 const router = new Hono();
 const fail = (context: Context, status: 400 | 401 | 403 | 404 | 409, code: string, message: string) =>
@@ -84,7 +85,8 @@ router.get("/admin/products", async (context) => {
     categoryName: categories.name,
   }).from(products).innerJoin(categories, eq(products.categoryId, categories.id))
     .orderBy(asc(products.name)).limit(200);
-  return context.json({ data });
+  const displayData = data.map((product) => ({ ...product, name: cleanProductName(product.reference, product.name) }));
+  return context.json({ data: displayData });
 });
 
 router.post("/admin/products/:id/stock-adjustments", async (context) => {
@@ -98,7 +100,7 @@ router.post("/admin/products/:id/stock-adjustments", async (context) => {
   }
   const productId = context.req.param("id");
   const result = await getDb().transaction(async (tx) => {
-    const [product] = await tx.select({ id: products.id, name: products.name, stock: products.stockPhysical, threshold: products.lowStockThreshold })
+    const [product] = await tx.select({ id: products.id, reference: products.reference, name: products.name, stock: products.stockPhysical, threshold: products.lowStockThreshold })
       .from(products).where(eq(products.id, productId)).for("update");
     if (!product) return { error: { status: 404 as const, code: "INTROUVABLE", message: "Ce produit n’existe pas." } };
     const stockAfter = product.stock + variation;
@@ -108,7 +110,8 @@ router.post("/admin/products/:id/stock-adjustments", async (context) => {
     await tx.insert(stockMovements).values({ productId, type: "adjustment", variation, stockBefore: product.stock, stockAfter, authorId: auth.user.id, reason });
     await tx.insert(auditLogs).values({ actorId: auth.user.id, action: "product.stock.adjusted", entityType: "product", entityId: productId, metadata: { variation, stockBefore: product.stock, stockAfter, reason } });
     if (product.stock > product.threshold && stockAfter <= product.threshold) {
-      await tx.insert(notifications).values({ userId: auth.user.id, type: "low_stock", title: "Stock faible", message: `${product.name} est sous le seuil de stock (${stockAfter}).`, link: "/admin", idempotencyKey: `low-stock:${productId}:${now.getTime()}` });
+      const productName = cleanProductName(product.reference, product.name);
+      await tx.insert(notifications).values({ userId: auth.user.id, type: "low_stock", title: "Stock faible", message: `${productName} est sous le seuil de stock (${stockAfter}).`, link: "/admin", idempotencyKey: `low-stock:${productId}:${now.getTime()}` });
     }
     return { data: { productId, stockBefore: product.stock, stockAfter } };
   });

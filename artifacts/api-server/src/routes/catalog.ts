@@ -3,6 +3,7 @@ import { GetCategoriesResponse, GetHomeResponse, GetProductResponse, GetProducts
 import { getDb } from "@workspace/db";
 import { categories, productImages, products, stockReservations } from "@workspace/db/schema";
 import { Hono } from "hono";
+import { cleanProductName } from "../product-names";
 
 const router = new Hono();
 const availableStock = () => sql<number>`GREATEST(
@@ -88,7 +89,7 @@ export async function loadProductCards(
     id: row.id,
     slug: row.slug,
     reference: row.reference,
-    name: row.name,
+    name: cleanProductName(row.reference, row.name),
     shortDescription: row.shortDescription,
     description: cleanCatalogCopy(row.description),
     priceFCFA: row.priceFCFA,

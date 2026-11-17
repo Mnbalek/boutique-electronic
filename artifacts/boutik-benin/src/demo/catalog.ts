@@ -180,6 +180,28 @@ const seeds: ProductSeed[] = [
   { name: "Gourde nomade Karimama", slug: "gourde-nomade-karimama", reference: "BB-BM-008", categorySlug: "preparation", priceFCFA: 8900, stock: 2, photoId: "1602143407151-7111542de6e8", description: "Une gourde réutilisable de démonstration, avec un stock faible." },
 ];
 
+const professionalNamesByReference: Record<string, string> = {
+  "BB-HT-001": "Smartphone A8", "BB-HT-002": "Smartphone 128 Go",
+  "BB-HT-003": "Ordinateur portable 14 pouces", "BB-HT-004": "Tablette 10 pouces",
+  "BB-HT-005": "Ordinateur portable 15 pouces", "BB-HT-006": "Appareil photo compact",
+  "BB-HT-007": "Casque audio", "BB-HT-008": "Enceinte portable Mini",
+  "BB-MA-001": "Sac tissé", "BB-MA-002": "Sac à main", "BB-MA-003": "Sac bandoulière",
+  "BB-MA-004": "Sac à dos", "BB-MA-005": "Baskets rouges", "BB-MA-006": "Baskets en toile",
+  "BB-MA-007": "Sandales", "BB-MA-008": "Chemise en coton",
+  "BB-MD-001": "Fauteuil", "BB-MD-002": "Canapé compact", "BB-MD-003": "Bureau compact",
+  "BB-MD-004": "Fauteuil d’appoint", "BB-MD-005": "Lampe décorative",
+  "BB-MD-006": "Suspension lumineuse", "BB-MD-007": "Coussin tissé", "BB-MD-008": "Vase de table",
+  "BB-BS-001": "Sérum visage", "BB-BS-002": "Crème hydratante", "BB-BS-003": "Nettoyant doux",
+  "BB-BS-004": "Huile de soin", "BB-BS-005": "Eau de parfum", "BB-BS-006": "Parfum ambré",
+  "BB-BS-007": "Brume parfumée", "BB-BS-008": "Soin quotidien",
+  "BB-CU-001": "Blender compact", "BB-CU-002": "Moulin à café", "BB-CU-003": "Bouteille isotherme",
+  "BB-CU-004": "Kit de préparation", "BB-CU-005": "Poêle familiale", "BB-CU-006": "Service de table",
+  "BB-CU-007": "Boîte de conservation", "BB-CU-008": "Théière en verre",
+  "BB-BM-001": "Montre classique", "BB-BM-002": "Montre connectée", "BB-BM-003": "Boucles d’oreilles",
+  "BB-BM-004": "Collier de perles", "BB-BM-005": "Bracelet fin", "BB-BM-006": "Collier doré",
+  "BB-BM-007": "Lunettes de soleil", "BB-BM-008": "Gourde nomade",
+};
+
 function cleanCatalogCopy(description: string) {
   return description
     .replace(/Un ordinateur compact présenté pour illustrer les fiches du catalogue\./i, "Un ordinateur compact adapté au travail et aux déplacements.")
@@ -194,12 +216,13 @@ function cleanCatalogCopy(description: string) {
 export const demoProducts: Product[] = seeds.map((seed, index) => {
   const category = categoryFor.get(seed.categorySlug);
   if (!category) throw new Error(`Missing demo category: ${seed.categorySlug}`);
+  const name = professionalNamesByReference[seed.reference] ?? seed.name;
 
   return {
     id: uuid(1001 + index),
     slug: seed.slug,
     reference: seed.reference,
-    name: seed.name,
+    name,
     shortDescription: seed.description,
     description: cleanCatalogCopy(seed.description),
     priceFCFA: seed.priceFCFA,
@@ -212,7 +235,7 @@ export const demoProducts: Product[] = seeds.map((seed, index) => {
     images: [
       {
         url: imageUrl(seed.photoId),
-        alt: seed.name,
+        alt: name,
         isPrimary: true,
       },
     ],

@@ -39,6 +39,7 @@ import {
 import { Hono, type Context } from "hono";
 import { getAuthenticatedUser } from "./auth";
 import { getPaymentMode } from "../payment-config";
+import { cleanProductName } from "../product-names";
 
 const router = new Hono();
 const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -119,7 +120,7 @@ async function getQuoteLines(userId: string) {
       previousPriceFCFA: row.seenPrice, stockAvailable: 0, imageUrl: imageById.get(row.productId) ?? "https://placehold.co/600x600/png",
     }];
     return [{
-      productId: product.id, name: product.name, reference: product.reference, categoryId: product.categoryId,
+      productId: product.id, name: cleanProductName(product.reference, product.name), reference: product.reference, categoryId: product.categoryId,
       quantity: row.quantity, unitPriceFCFA: product.price, previousPriceFCFA: row.seenPrice,
       stockAvailable: product.stock, imageUrl: imageById.get(row.productId) ?? "https://placehold.co/600x600/png",
     }];
