@@ -4,6 +4,10 @@ command = "pnpm --filter @workspace/boutik-benin run build"
 publish = "artifacts/boutik-benin/dist/public"
 functions = "netlify/functions"
 
+[functions]
+node_bundler = "esbuild"
+external_node_modules = ["@neondatabase/serverless", "drizzle-orm", "hono", "zod"]
+
 [build.environment]
 NODE_VERSION = "22"
 
