@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, Route, Switch, useLocation, useParams } from 'wouter';
 import {
@@ -273,7 +273,7 @@ function ProductPage({ add }: { add: (p: Product, quantity?: number) => void }) 
 function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
   const [,setLocation]=useLocation();
   const queryClient=useQueryClient();
-  const reg=useRegister(); const login=useLogin(); const merge=useMergeCart();
+  const reg=useRegister(); const login=useLogin();
   const forgot=useRequestPasswordReset(); const reset=useResetPassword();
   const {jeton=''}=useParams<{jeton:string}>();
   const [error,setError]=useState(''); const [success,setSuccess]=useState('');
@@ -286,7 +286,7 @@ function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
       const phone=normalizeBeninPhone(form.phone);
       if(mode==='register'&&!phone){setError('Saisissez un numéro béninois à 10 chiffres (01 suivi de 8 chiffres), ou un ancien numéro à 8 chiffres.');return;}
       const data=mode==='register'?{email:form.email,password:form.password,firstName:form.firstName,lastName:form.lastName,phone}:{email:form.email,password:form.password};
-      mutation.mutate({data} as never,{onSuccess:(result)=>{queryClient.setQueryData(getGetCurrentUserQueryKey(),result);const guest=readGuest();const items=Object.values(guest).map(({productId,quantity,lastSeenPriceFCFA})=>({productId,quantity,lastSeenPriceFCFA}));if(items.length)merge.mutate({data:{items}} as never);saveGuest({});setLocation('/compte');},onError:(err)=>setError((err as Error).message||'Vérifiez les informations saisies.')});
+      mutation.mutate({data} as never,{onSuccess:(result)=>{queryClient.setQueryData(getGetCurrentUserQueryKey(),result);setLocation('/compte');},onError:(err)=>setError((err as Error).message||'Vérifiez les informations saisies.')});
     } else if(mode==='forgot') forgot.mutate({data:{email:form.email}},{onSuccess:()=>setSuccess('Si cette adresse correspond à un compte, une instruction de réinitialisation est disponible pour le moment.'),onError:()=>setError('La demande n’a pas pu être traitée. Réessayez.')});
     else reset.mutate({data:{token:jeton,password:form.password}},{onSuccess:()=>{setSuccess('Le mot de passe a été mis à jour.');setTimeout(()=>setLocation('/connexion'),1200);},onError:()=>setError('Le lien est invalide ou expiré.')});
   };
@@ -311,9 +311,9 @@ function CartPage({ isGuest, setGuest }: {isGuest:boolean;setGuest:(x:GuestCart)
   const cartQ=useGetCart({query:{enabled:!isGuest,queryKey:cartKey}}); const guest=readGuest();
   const syncCart=(response:CartResponse)=>queryClient.setQueryData(cartKey,response);
   const refreshCart=()=>{void queryClient.invalidateQueries({queryKey:cartKey});};
-  const setItem=useSetCartItem({mutation:{onSuccess:syncCart,onError:refreshCart}});
-  const remove=useRemoveCartItem({mutation:{onSuccess:syncCart,onError:refreshCart}});
-  const clear=useClearCart({mutation:{onSuccess:syncCart,onError:refreshCart}});
+  const setItem=useSetCartItem({mutation:{scope:{id:'customer-cart'},onSuccess:syncCart,onError:refreshCart}});
+  const remove=useRemoveCartItem({mutation:{scope:{id:'customer-cart'},onSuccess:syncCart,onError:refreshCart}});
+  const clear=useClearCart({mutation:{scope:{id:'customer-cart'},onSuccess:syncCart,onError:refreshCart}});
   const entries=cartQ.data?.data?.items||[];
   if(!isGuest&&cartQ.isLoading)return <Loading/>;
   if(!isGuest&&cartQ.isError)return <Retry onClick={()=>void cartQ.refetch()}/>;
@@ -439,10 +439,22 @@ function NotFound(){return <div className="mx-auto max-w-xl py-16 text-center" d
 
 export default function Storefront(){
  const [location]=useLocation();const queryClient=useQueryClient();const current=useGetCurrentUser({query:{queryKey:getGetCurrentUserQueryKey(),retry:false}});const cartKey=getGetCartQueryKey();const {toast}=useToast();
+ const mergeGuestCart=useMergeCart({mutation:{scope:{id:'customer-cart'}}});const guestMergeInFlight=useRef(false);
  const [guest,setGuestState]=useState<GuestCart>(readGuest);const setGuest=(x:GuestCart)=>{saveGuest(x);setGuestState(x);};
  const syncCart=(response:CartResponse)=>queryClient.setQueryData(cartKey,response);
  const refreshCart=()=>{void queryClient.invalidateQueries({queryKey:cartKey});};
- const setItem=useSetCartItem({mutation:{onSuccess:syncCart,onError:refreshCart}});
+ const setItem=useSetCartItem({mutation:{scope:{id:'customer-cart'},onSuccess:syncCart,onError:refreshCart}});
+ useEffect(()=>{
+  if(!current.data?.data||guestMergeInFlight.current)return;
+  const guestItems=Object.values(readGuest()).map(({productId,quantity,lastSeenPriceFCFA})=>({productId,quantity,lastSeenPriceFCFA}));
+  if(!guestItems.length)return;
+  guestMergeInFlight.current=true;
+  mergeGuestCart.mutate({data:{items:guestItems}} as never,{
+   onSuccess:(response)=>{queryClient.setQueryData(cartKey,response);saveGuest({});setGuestState({});},
+   onError:()=>toast({title:'Panier conservé',description:'Le panier invité est gardé sur cet appareil. Rechargez la page pour réessayer.',variant:'destructive'}),
+   onSettled:()=>{guestMergeInFlight.current=false;},
+  });
+ },[current.data?.data?.id]);
  const add=(p:Product,requestedQuantity=1)=>{const maxQuantity=Math.min(10,p.stock);if(!p.available||maxQuantity<1)return;const increment=Math.max(1,Math.floor(requestedQuantity));if(current.data?.data){const cached=queryClient.getQueryData<CartResponse>(cartKey);const existing=cached?.data.items.find(item=>item.productId===p.id)?.quantity||0;const quantity=Math.min(maxQuantity,existing+increment);queryClient.setQueryData(cartKey,optimisticallySetCartLine(cached,p,quantity));setItem.mutate({productId:p.id,data:{quantity,lastSeenPriceFCFA:p.priceFCFA}} as never,{onError:()=>toast({title:'Ajout impossible',description:'L’article n’a pas pu être ajouté. Réessayez.',variant:'destructive'})});toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`});}else{const guestCart=readGuest();const quantity=Math.min(maxQuantity,(guestCart[p.slug]?.quantity||0)+increment);guestCart[p.slug]={productId:p.id,quantity,lastSeenPriceFCFA:p.priceFCFA};setGuest(guestCart);toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`});}};
  if(location.startsWith('/admin'))return <AdminPage isAdmin={current.data?.data?.role==='admin'} isCheckingAccess={current.isLoading} user={current.data?.data?{firstName:current.data.data.firstName,lastName:current.data.data.lastName,email:current.data.data.email}:undefined}/>;
  return <StoreShell><Switch>
