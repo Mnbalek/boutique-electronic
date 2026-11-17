@@ -373,10 +373,11 @@ function ContactPage(){const [sent,setSent]=useState(false);return <div classNam
 function NotFound(){return <div className="mx-auto max-w-xl py-16 text-center" data-testid="page-not-found"><p className="eyebrow">Erreur 404</p><h1 className="font-display text-4xl font-semibold">Cette page est introuvable.</h1><p className="mt-3 text-slate-600">Le lien est peut-être incorrect ou la page a été déplacée.</p><Link href="/" className="btn btn-primary mt-6" data-testid="link-not-found-home">Retour à l’accueil</Link></div>}
 
 export default function Storefront(){
- const current=useGetCurrentUser({query:{queryKey:getGetCurrentUserQueryKey(),retry:false}});const cart=useGetCart({query:{enabled:!!current.data?.data,queryKey:getGetCartQueryKey()}});const {toast}=useToast();
+ const [location]=useLocation();const current=useGetCurrentUser({query:{queryKey:getGetCurrentUserQueryKey(),retry:false}});const cart=useGetCart({query:{enabled:!!current.data?.data,queryKey:getGetCartQueryKey()}});const {toast}=useToast();
  const [guest,setGuestState]=useState<GuestCart>(readGuest);const setGuest=(x:GuestCart)=>{saveGuest(x);setGuestState(x);};
  const setItem=useSetCartItem();
  const add=(p:Product,requestedQuantity=1)=>{const maxQuantity=Math.min(10,p.stock);if(!p.available||maxQuantity<1)return;const increment=Math.max(1,Math.floor(requestedQuantity));if(current.data?.data){const existing=cart.data?.data?.items.find(item=>item.productId===p.id)?.quantity||0;const quantity=Math.min(maxQuantity,existing+increment);setItem.mutate({productId:p.id,data:{quantity,lastSeenPriceFCFA:p.priceFCFA}} as never,{onSuccess:()=>toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`}),onError:()=>toast({title:'Ajout impossible',description:'L’article n’a pas pu être ajouté. Réessayez.',variant:'destructive'})});}else{const guestCart=readGuest();const quantity=Math.min(maxQuantity,(guestCart[p.slug]?.quantity||0)+increment);guestCart[p.slug]={productId:p.id,quantity,lastSeenPriceFCFA:p.priceFCFA};setGuest(guestCart);toast({title:'Article ajouté au panier',description:`${p.name} · quantité ${quantity}.`});}};
+ if(location.startsWith('/admin'))return <AdminPage isAdmin={current.data?.data?.role==='admin'} isCheckingAccess={current.isLoading} user={current.data?.data?{firstName:current.data.data.firstName,lastName:current.data.data.lastName,email:current.data.data.email}:undefined}/>;
  return <StoreShell><Switch>
   <Route path="/"><HomePage add={add}/></Route>
   <Route path="/produits"><ProductsPage add={add}/></Route>
@@ -386,7 +387,6 @@ export default function Storefront(){
   <Route path="/mot-de-passe-oublie"><AuthPage mode="forgot"/></Route><Route path="/reinitialisation/:jeton"><AuthPage mode="reset"/></Route>
   <Route path="/panier"><CartPage isGuest={!current.data?.data} setGuest={setGuest}/></Route><Route path="/commande"><CheckoutPage/></Route><Route path="/commande/:id/verification"><PaymentReturnPage/></Route>
   <Route path="/compte"><AccountPage section=""/></Route><Route path="/compte/profil"><AccountPage section="profil"/></Route><Route path="/compte/adresses"><AccountPage section="adresses"/></Route><Route path="/compte/commandes"><AccountPage section="commandes"/></Route><Route path="/compte/commandes/:id"><OrderDetailPage/></Route><Route path="/compte/commandes/:id/recu"><ReceiptPage/></Route><Route path="/compte/notifications"><AccountPage section="notifications"/></Route>
-  <Route path="/admin"><AdminPage isAdmin={current.data?.data?.role==='admin'}/></Route>
   <Route path="/cgv"><LegalPage slug="cgv"/></Route><Route path="/mentions-legales"><LegalPage slug="mentions-legales"/></Route><Route path="/confidentialite"><LegalPage slug="confidentialite"/></Route><Route path="/retours"><LegalPage slug="retours"/></Route><Route path="/contact"><ContactPage/></Route>
   <Route component={NotFound}/>
  </Switch></StoreShell>;
