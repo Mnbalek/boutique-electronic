@@ -416,7 +416,6 @@ router.post("/orders/:id/payments", async (context) => {
   if (!user) return fail(context, 401, "NON_AUTHENTIFIE", "Une connexion est nécessaire.");
   const parsed = RetryOrderPaymentResponse.shape.data.shape.orderId.safeParse(context.req.param("id"));
   if (!parsed.success) return fail(context, 400, "PARAMETRE_INVALIDE", "Identifiant de commande invalide.");
-  if (getPaymentMode() !== "mock") return fail(context, 409, "PAIEMENT_INDISPONIBLE", "Le paiement de démonstration n’est pas activé.");
 
   const orderId = parsed.data;
   const now = new Date();
