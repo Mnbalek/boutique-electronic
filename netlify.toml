@@ -10,6 +10,7 @@ external_node_modules = ["@neondatabase/serverless", "drizzle-orm", "hono", "zod
 
 [build.environment]
 NODE_VERSION = "22"
+PNPM_FLAGS = "--shamefully-hoist"
 
 [dev]
 command = "pnpm --filter @workspace/boutik-benin run dev"
