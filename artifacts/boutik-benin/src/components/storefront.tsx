@@ -21,6 +21,7 @@ import {
   Menu, Minus, Package, Plus, Search, ShieldCheck, ShoppingBag, ShoppingCart, Truck, UserRound, X,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import AdminPage from '@/components/admin';
 
 const money = (n?: number) => `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n || 0)} FCFA`;
 const localDate = (date?: string) => date ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeZone: 'Africa/Porto-Novo' }).format(new Date(date)) : '—';
@@ -102,6 +103,7 @@ function StoreShell({ children }: { children: React.ReactNode }) {
         <nav className={`${menu ? 'absolute left-0 right-0 top-full flex flex-col border-b bg-white p-4 shadow-lg' : 'hidden'} md:static md:flex md:flex-row md:items-center md:border-0 md:bg-transparent md:p-0 md:shadow-none`} aria-label="Navigation principale">
           <Link href="/produits" className="rounded-lg px-3 py-2 text-sm font-semibold hover:bg-emerald-50" data-testid="link-shop">Boutique</Link>
           <Link href={user.data?.data ? '/compte' : '/connexion'} className="rounded-lg px-3 py-2 text-sm font-semibold hover:bg-emerald-50" data-testid="link-account">{user.data?.data ? 'Mon compte' : 'Connexion'}</Link>
+          {user.data?.data?.role==='admin'&&<Link href="/admin" className="rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-emerald-50" data-testid="link-admin">Administration</Link>}
           {user.data?.data && <Link href="/compte/notifications" className="relative rounded-lg px-3 py-2 text-sm font-semibold hover:bg-emerald-50" data-testid="link-notifications"><Bell size={17} className="inline"/> Notifications{(unread.data?.data?.count || 0) > 0 && <span className="ml-1 rounded-full bg-accent px-1.5 text-xs">{unread.data?.data?.count}</span>}</Link>}
         </nav>
         <Link href="/panier" className="relative ml-auto grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-slate-200 bg-white" aria-label="Ouvrir le panier" data-testid="link-cart"><ShoppingCart size={19}/><span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-accent px-1 text-center text-[10px] font-bold" data-testid="text-cart-count">{count}</span></Link>
@@ -384,6 +386,7 @@ export default function Storefront(){
   <Route path="/mot-de-passe-oublie"><AuthPage mode="forgot"/></Route><Route path="/reinitialisation/:jeton"><AuthPage mode="reset"/></Route>
   <Route path="/panier"><CartPage isGuest={!current.data?.data} setGuest={setGuest}/></Route><Route path="/commande"><CheckoutPage/></Route><Route path="/commande/:id/verification"><PaymentReturnPage/></Route>
   <Route path="/compte"><AccountPage section=""/></Route><Route path="/compte/profil"><AccountPage section="profil"/></Route><Route path="/compte/adresses"><AccountPage section="adresses"/></Route><Route path="/compte/commandes"><AccountPage section="commandes"/></Route><Route path="/compte/commandes/:id"><OrderDetailPage/></Route><Route path="/compte/commandes/:id/recu"><ReceiptPage/></Route><Route path="/compte/notifications"><AccountPage section="notifications"/></Route>
+  <Route path="/admin"><AdminPage isAdmin={current.data?.data?.role==='admin'}/></Route>
   <Route path="/cgv"><LegalPage slug="cgv"/></Route><Route path="/mentions-legales"><LegalPage slug="mentions-legales"/></Route><Route path="/confidentialite"><LegalPage slug="confidentialite"/></Route><Route path="/retours"><LegalPage slug="retours"/></Route><Route path="/contact"><ContactPage/></Route>
   <Route component={NotFound}/>
  </Switch></StoreShell>;

@@ -15,6 +15,7 @@ tags:
   - name: cart
   - name: orders
   - name: notifications
+  - name: administration
 paths:
   /healthz:
     get:
@@ -640,6 +641,88 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/ActionResponse" }
+  /admin/overview:
+    get:
+      operationId: getAdminOverview
+      tags: [administration]
+      summary: Get administration dashboard metrics
+      responses:
+        "200":
+          description: Administration dashboard metrics
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminOverviewResponse" }
+        "401": { description: Authentication required }
+        "403": { description: Administrator role required }
+  /admin/orders:
+    get:
+      operationId: getAdminOrders
+      tags: [administration]
+      summary: List recent orders for administration
+      responses:
+        "200":
+          description: Recent orders
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminOrdersResponse" }
+        "401": { description: Authentication required }
+        "403": { description: Administrator role required }
+  /admin/orders/{id}/advance:
+    post:
+      operationId: advanceAdminOrder
+      tags: [administration]
+      summary: Advance an order through an allowed fulfillment status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Order status advanced
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      orderId: { type: string, format: uuid }
+                      status: { type: string, enum: [preparing, shipped, delivered] }
+                    required: [orderId, status]
+                required: [data]
+        "401": { description: Authentication required }
+        "403": { description: Administrator role required }
+        "409": { description: Disallowed order transition }
+  /admin/orders/{id}/simulate-payment:
+    post:
+      operationId: simulateAdminPayment
+      tags: [administration]
+      summary: Record a clearly identified simulated payment outcome
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                outcome: { type: string, enum: [succeeded, failed] }
+              required: [outcome]
+      responses:
+        "200":
+          description: Simulated payment recorded
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AdminPaymentSimulationResponse" }
+        "401": { description: Authentication required }
+        "403": { description: Administrator role required }
+        "409": { description: Order cannot be simulated }
 components:
   schemas:
     HealthStatus:
@@ -1153,5 +1236,52 @@ components:
           properties:
             count: { type: integer, minimum: 0 }
           required: [count]
+      required: [data]
+    AdminOverviewResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            ordersPendingPayment: { type: integer }
+            ordersToPrepare: { type: integer }
+            ordersShipped: { type: integer }
+            products: { type: integer }
+            lowStockProducts: { type: integer }
+            customers: { type: integer }
+            simulatedRevenueFCFA: { type: integer }
+            paymentMode: { type: string, const: simulation }
+          required: [ordersPendingPayment, ordersToPrepare, ordersShipped, products, lowStockProducts, customers, simulatedRevenueFCFA, paymentMode]
+      required: [data]
+    AdminOrdersResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string, format: uuid }
+              reference: { type: string }
+              status: { type: string }
+              totalFCFA: { type: integer }
+              createdAt: { type: string, format: date-time }
+              firstName: { type: string }
+              lastName: { type: string }
+              email: { type: string, format: email }
+              paymentStatus: { type: [string, "null"] }
+              paymentSimulation: { type: boolean }
+            required: [id, reference, status, totalFCFA, createdAt, firstName, lastName, email, paymentStatus, paymentSimulation]
+      required: [data]
+    AdminPaymentSimulationResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            orderId: { type: string, format: uuid }
+            outcome: { type: string, enum: [succeeded, failed] }
+            simulated: { type: boolean, const: true }
+          required: [orderId, outcome, simulated]
       required: [data]
 

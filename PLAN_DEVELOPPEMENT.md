@@ -80,20 +80,24 @@ Le cahier v1.3 prescrit React/Vite, Netlify Functions avec Hono et Neon PostgreS
 
 **Avancement :** tarifs initiaux et rattachements de zones du cahier chargés (1 000 / 2 000 / 3 500 FCFA); preview checkout, promotions, idempotence, historique de commande et réservation transactionnelle ajoutés. Contrôle réel à Cotonou réussi : preview à 1 000 FCFA, création, répétition idempotente, garde commande en attente et liste client. Les commandes/réservations de vérification ont été supprimées. Confirmation Kkiapay, transitions post-paiement et tâche planifiée d’expiration restent à faire.
 
-### 6. Paiement Kkiapay Sandbox et notifications
+### 6. Paiements simulés et notifications — Kkiapay reporté
 
-- Initialiser le widget en Sandbox et vérifier transaction, montant, devise et référence côté serveur.
-- Faire converger retour navigateur et webhook dans le même traitement idempotent.
-- Gérer échec, reprise, doublons, paiement tardif, expiration et mode mock réservé au développement/tests.
+- Pour la démonstration actuelle, permettre à l’administrateur de simuler un succès ou un refus sans appeler de prestataire ni encaisser d’argent.
+- Conserver l’idempotence, les transitions de commande, les mouvements de stock, les notifications internes et le journal d’audit associés à l’issue simulée.
+- Reporter l’intégration Kkiapay Sandbox, les webhooks et la vérification fournisseur à une étape ultérieure, après validation du compte marchand.
 - Ajouter notifications internes et envoi email configurable; exécuter le traitement périodique d’expiration et de purge.
 
 **Recette associée :** BF18–BF28, BF45, BF48–BF49 et scénarios RC21–RC30, RC32.
+
+**Décision du propriétaire :** Kkiapay est reporté. La simulation ne doit jamais être présentée comme un paiement réel.
 
 ### 7. Administration commerciale
 
 - Protéger l’espace d’administration par rôle vérifié côté serveur.
 - Gérer produits, catégories, images, prix, stocks et mouvements, commandes, clients, promotions, paiements simulés, remboursements, zones de livraison, bannières et paramètres.
 - Ajouter tableau de bord, notifications de stock bas et journal d’audit immuable.
+
+**Avancement :** première tranche en cours : espace protégé, indicateurs, liste des commandes, simulation succès/refus avec stock, historique, notification et audit; progression contrôlée de confirmed à delivered. La gestion des produits, catégories, images, ajustements manuels, clients, promotions, remboursements, zones, bannières, paramètres et notifications de stock bas reste à réaliser.
 
 **Recette associée :** BF29–BF40, BF50–BF55 et scénarios RC33–RC40, RC44–RC45.
 

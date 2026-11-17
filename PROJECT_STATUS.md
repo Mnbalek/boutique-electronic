@@ -14,7 +14,8 @@ Le cahier des charges v1.3 fourni par le propriétaire est la référence foncti
 - Les parcours inscription/connexion/session/logout, panier connecté et CRUD d’adresses ont été vérifiés sur Neon avec un compte temporaire ensuite supprimé.
 - Le référentiel CC BY 4.0 des 12 départements et 77 communes et les 3 zones tarifaires initiales du cahier sont chargés. Les tarifs sont des valeurs de démonstration à confirmer avant exploitation commerciale.
 - Le preview checkout calcule les totaux et promotions côté serveur. La création de commande est idempotente et transactionnelle : vérification prix/stock, verrouillage des produits, snapshot d’adresse/livraison, lignes, réservation, tentative de paiement initiale et historique. Test Neon réussi pour devis Cotonou (1 000 FCFA), création, répétition de même clé, garde d’une commande en attente et liste; les données temporaires ont été supprimées.
-- Le démarrage refuse désormais `PAYMENT_MODE=mock` en production. La confirmation Kkiapay, les transitions de commande après paiement, tâche périodique d’expiration, notifications, anonymisation du compte, administration et reçu restent à implémenter. Aucun écran ni endpoint d’administration n’est présent.
+- Le démarrage refuse `PAYMENT_MODE=mock` en production. Le propriétaire a reporté Kkiapay et demandé des paiements simulés pour la démonstration. Un premier espace admin protégé est en cours : indicateurs, commandes, issues de paiement simulées, transitions de préparation/expédition/livraison et journal d’audit. Les fonctions admin du catalogue, stocks manuels, clients, promotions, remboursements, zones, contenus et paramètres restent à faire. Ces changements ne sont pas encore déployés à la date de cette mise à jour.
+- Le compte `jeannine@gmail.com` a bien le rôle `admin` en base et l’authentification fonctionne. Avant l’espace admin, il n’ouvrait que l’interface client ; le rôle seul n’implémentait aucune fonction de gestion.
 - La connexion locale de développement utilise Hono sur 8080; Vite transmet `/api` vers ce serveur. En déploiement, Netlify route `/api/*` vers la fonction Hono.
 - Le client DB Neon passe par WebSocket HTTPS (443), car le réseau laissait établir TLS sur le port PostgreSQL mais ne renvoyait pas de réponse SQL. Le driver officiel Neon fonctionne avec la configuration présente; `drizzle-kit migrate` est remplacé par le migrateur Drizzle via ce même transport.
 - Le lockfile a été recalculé et `pnpm install --frozen-lockfile --ignore-scripts` a installé les dépendances. Le build global passe. L’API a retourné HTTP 200 pour health, départements (12), communes (77) et catégories (6); le panier sans session retourne 401.
@@ -29,10 +30,10 @@ Les fichiers de configuration et métadonnées spécifiques à Replit ont été 
 
 1. Architecture retenue conformément au cahier : Netlify Functions + Hono 4 stable + Neon; décision documentée dans l’ADR-001.
 2. La validation visuelle reste ouverte et prioritaire avant la présentation.
-3. Neon est accessible via le transport WebSocket; les migrations et seeds utilisent ce canal. Confirmer les tarifs de démonstration avant production et poursuivre avec Kkiapay Sandbox.
+3. Neon est accessible via le transport WebSocket; les migrations et seeds utilisent ce canal. Confirmer les tarifs de démonstration avant exploitation réelle. Kkiapay est reporté; la démonstration utilisera des états de paiement simulés, toujours étiquetés comme tels.
 
 ## Suite recommandée
 
-Suivre le plan de livraison par phases dans `PLAN_DEVELOPPEMENT.md`. Catalogue, compte client, panier, adresses, zones, preview checkout et création/réservation de commande sont écrits et vérifiés. La prochaine étape est Kkiapay Sandbox et la confirmation sécurisée côté serveur.
+Suivre le plan de livraison par phases dans `PLAN_DEVELOPPEMENT.md`. Le client et la création de commande fonctionnent en partie. La phase d’administration commence par les commandes et paiements simulés; les autres modules admin et la recette complète restent ouverts.
 
 Ne pas présenter les données fictives comme des données commerciales et ne pas activer le mode de paiement simulé en production.
