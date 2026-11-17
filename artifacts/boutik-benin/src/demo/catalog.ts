@@ -180,6 +180,17 @@ const seeds: ProductSeed[] = [
   { name: "Gourde nomade Karimama", slug: "gourde-nomade-karimama", reference: "BB-BM-008", categorySlug: "preparation", priceFCFA: 8900, stock: 2, photoId: "1602143407151-7111542de6e8", description: "Une gourde réutilisable de démonstration, avec un stock faible." },
 ];
 
+function cleanCatalogCopy(description: string) {
+  return description
+    .replace(/Un ordinateur compact présenté pour illustrer les fiches du catalogue\./i, "Un ordinateur compact adapté au travail et aux déplacements.")
+    .replace(/Des baskets colorées présentées pour illustrer la catégorie chaussures\./i, "Des baskets colorées qui apportent une touche vive à vos tenues.")
+    .replace(/donnée de démonstration/gi, "conçue pour le quotidien")
+    .replace(/de démonstration/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([.,])/g, "$1")
+    .trim();
+}
+
 export const demoProducts: Product[] = seeds.map((seed, index) => {
   const category = categoryFor.get(seed.categorySlug);
   if (!category) throw new Error(`Missing demo category: ${seed.categorySlug}`);
@@ -190,7 +201,7 @@ export const demoProducts: Product[] = seeds.map((seed, index) => {
     reference: seed.reference,
     name: seed.name,
     shortDescription: seed.description,
-    description: seed.description,
+    description: cleanCatalogCopy(seed.description),
     priceFCFA: seed.priceFCFA,
     compareAtPriceFCFA: seed.compareAtPriceFCFA ?? null,
     stock: seed.stock,

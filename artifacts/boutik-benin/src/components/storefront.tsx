@@ -256,7 +256,7 @@ function AuthPage({ mode }: { mode: 'login'|'register'|'forgot'|'reset' }) {
       const data=mode==='register'?{email:form.email,password:form.password,firstName:form.firstName,lastName:form.lastName,phone}:{email:form.email,password:form.password};
       mutation.mutate({data} as never,{onSuccess:(result)=>{queryClient.setQueryData(getGetCurrentUserQueryKey(),result);const guest=readGuest();const items=Object.values(guest).map(({productId,quantity,lastSeenPriceFCFA})=>({productId,quantity,lastSeenPriceFCFA}));if(items.length)merge.mutate({data:{items}} as never);saveGuest({});setLocation('/compte');},onError:(err)=>setError((err as Error).message||'Vérifiez les informations saisies.')});
     } else if(mode==='forgot') forgot.mutate({data:{email:form.email}},{onSuccess:()=>setSuccess('Si cette adresse correspond à un compte, une instruction de réinitialisation est disponible pour le moment.'),onError:()=>setError('La demande n’a pas pu être traitée. Réessayez.')});
-    else reset.mutate({data:{token:jeton,password:form.password}},{onSuccess:()=>{setSuccess('Le mot de passe a été mis à jour pour la démonstration.');setTimeout(()=>setLocation('/connexion'),1200);},onError:()=>setError('Le lien est invalide ou expiré.')});
+    else reset.mutate({data:{token:jeton,password:form.password}},{onSuccess:()=>{setSuccess('Le mot de passe a été mis à jour.');setTimeout(()=>setLocation('/connexion'),1200);},onError:()=>setError('Le lien est invalide ou expiré.')});
   };
   const pending=reg.isPending||login.isPending||forgot.isPending||reset.isPending;
   return <div className="mx-auto grid max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white md:grid-cols-[.8fr_1.2fr]" data-testid={`page-${mode}`}>

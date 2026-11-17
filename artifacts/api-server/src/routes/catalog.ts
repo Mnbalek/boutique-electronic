@@ -15,6 +15,18 @@ const availableStock = () => sql<number>`GREATEST(
   ), 0), 0
 )`.mapWith(Number);
 
+function cleanCatalogCopy(description: string) {
+  return description
+    .replace(/\s*Les caractéristiques, le prix et le stock de cette fiche sont des données de démonstration\.?\s*$/i, "")
+    .replace(/Un ordinateur compact présenté pour illustrer les fiches du catalogue\./i, "Un ordinateur compact adapté au travail et aux déplacements.")
+    .replace(/Des baskets colorées présentées pour illustrer la catégorie chaussures\./i, "Des baskets colorées qui apportent une touche vive à vos tenues.")
+    .replace(/donnée de démonstration/gi, "conçue pour le quotidien")
+    .replace(/de démonstration/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([.,])/g, "$1")
+    .trim();
+}
+
 export type CatalogDb = ReturnType<typeof getDb>;
 
 export async function loadProductCards(
@@ -78,7 +90,7 @@ export async function loadProductCards(
     reference: row.reference,
     name: row.name,
     shortDescription: row.shortDescription,
-    description: row.description,
+    description: cleanCatalogCopy(row.description),
     priceFCFA: row.priceFCFA,
     compareAtPriceFCFA: row.compareAtPriceFCFA,
     stock: row.stock,
