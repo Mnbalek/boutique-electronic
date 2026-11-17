@@ -1,12 +1,11 @@
 [build]
 base = "."
-command = "pnpm --filter @workspace/boutik-benin run build"
+command = "pnpm exec esbuild netlify/functions/api.mts --bundle --platform=node --format=esm --packages=bundle --outfile=artifacts/api-server/dist/api.mjs && pnpm --filter @workspace/boutik-benin run build"
 publish = "artifacts/boutik-benin/dist/public"
-functions = "netlify/functions"
+functions = "artifacts/api-server/dist"
 
 [functions]
 node_bundler = "esbuild"
-external_node_modules = ["@neondatabase/serverless", "drizzle-orm", "hono", "zod"]
 
 [build.environment]
 NODE_VERSION = "22"
