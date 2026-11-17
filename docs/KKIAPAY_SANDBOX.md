@@ -12,7 +12,7 @@ Add these variables in **Site configuration → Environment variables**. Set the
 
 Never put the private key, secret key, or webhook hash in the repository, `netlify.toml`, frontend variables, or a browser request. Values in `netlify.toml` are build-only and are not available to Netlify Functions at runtime. The public key is returned by the API only to configure the browser widget.
 
-After saving environment variables, trigger a fresh production deploy. The checkout's payment configuration endpoint reports Sandbox as enabled only when the three API keys are present.
+After saving environment variables, trigger a fresh production deploy. When `PAYMENT_MODE=sandbox` is selected but one or more of the three API keys are missing, the backend safely keeps the payment simulation active. Once all three keys are present, the checkout switches to the Sandbox widget.
 
 ## Kkiapay webhook
 

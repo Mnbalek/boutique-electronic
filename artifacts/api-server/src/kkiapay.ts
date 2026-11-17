@@ -20,7 +20,7 @@ export function getKkiapayPublicConfig() {
   return {
     mode,
     enabled: sandbox && !!publicKey && !!privateKey && !!secretKey,
-    publicKey: publicKey || null,
+    publicKey: sandbox ? publicKey || null : null,
     sandbox,
   } as const;
 }
