@@ -25,10 +25,9 @@ const homeResponse = {
     storeName: "Boutik Bénin",
     banner: {
       title: "Des articles choisis pour le quotidien",
-      subtitle:
-        "Parcourez une sélection variée. Les produits, prix et stocks affichés sont des exemples de démonstration.",
+      subtitle: "Parcourez notre catalogue et découvrez les articles disponibles.",
       imageUrl: demoProducts[0].images[0].url,
-      imageAlt: "Sélection de produits de démonstration",
+      imageAlt: "Sélection de produits Boutik Bénin",
       actionLabel: "Voir la boutique",
       actionUrl: "/produits",
     },

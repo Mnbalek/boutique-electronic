@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  CircleDollarSign,
   Clock3,
   ExternalLink,
   LayoutDashboard,
@@ -22,6 +21,7 @@ import {
   Search,
   ShoppingCart,
   Store,
+  Users,
   X,
 } from "lucide-react";
 
@@ -255,7 +255,7 @@ export default function AdminPage({ isAdmin, isCheckingAccess = false, user }: {
   const view: AdminView = location.startsWith("/admin/commandes") ? "orders" : location.startsWith("/admin/stock") ? "stock" : "overview";
   const titles: Record<AdminView, { title: string; description: string }> = {
     overview: { title: "Vue d’ensemble", description: "Les indicateurs et actions à traiter sur votre boutique." },
-    orders: { title: "Commandes", description: "Suivez les paiements simulés et faites avancer les commandes." },
+    orders: { title: "Commandes", description: "Suivez les paiements et faites avancer les commandes." },
     stock: { title: "Stock", description: "Surveillez les disponibilités et justifiez chaque mouvement." },
   };
   const page = titles[view];
@@ -291,15 +291,14 @@ function OverviewView({ overview, loading, error, retryOverview, orders, ordersL
   const lowStock = products.filter((product) => product.status === "active" && product.stockPhysical <= product.lowStockThreshold).slice(0, 5);
   return <div data-testid="page-admin" className="space-y-7">
     <SectionHeading eyebrow="Pilotage de la boutique" title="Bonjour, voici votre activité" description="Un aperçu des opérations qui méritent votre attention aujourd’hui." action={<p className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600">{new Intl.DateTimeFormat("fr-FR", { dateStyle: "full", timeZone: "Africa/Porto-Novo" }).format(new Date())}</p>}/>
-    <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3.5 text-sm text-amber-950"><CircleDollarSign className="mt-0.5 shrink-0" size={18}/><p><strong>Mode démonstration :</strong> les paiements sont simulés et aucun argent n’est encaissé. Les montants sont indicatifs.</p></div>
     {loading ? <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{Array.from({ length: 4 }, (_, i) => <div key={i} className="skeleton h-36 rounded-xl" aria-label="Chargement des indicateurs"/>)}</div> : error ? <ErrorPanel error={error} onRetry={retryOverview}/> : overview && <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      <MetricCard label="À payer" value={overview.ordersPendingPayment} detail="Commandes en attente de paiement simulé" icon={Clock3} tone="amber" onClick={() => onNavigate("/admin/commandes")}/>
+      <MetricCard label="À payer" value={overview.ordersPendingPayment} detail="Commandes en attente de règlement" icon={Clock3} tone="amber" onClick={() => onNavigate("/admin/commandes")}/>
       <MetricCard label="À traiter" value={overview.ordersToPrepare} detail="Commandes confirmées ou en préparation" icon={PackageCheck} tone="blue" onClick={() => onNavigate("/admin/commandes")}/>
       <MetricCard label="Stock à surveiller" value={overview.lowStockProducts} detail="Produits actifs sous leur seuil" icon={AlertTriangle} tone="violet" onClick={() => onNavigate("/admin/stock?filtre=bas")}/>
-      <MetricCard label="Ventes simulées" value={money(overview.simulatedRevenueFCFA)} detail={`${overview.customers} comptes clients · données de démonstration`} icon={CircleDollarSign} tone="green"/>
+      <MetricCard label="Comptes clients" value={overview.customers} detail="Comptes enregistrés dans la boutique" icon={Users} tone="green"/>
     </div>}
     <div className="grid gap-5 xl:grid-cols-2">
-      <Panel title="Commandes à payer" description="Les dernières commandes en attente de simulation" action={<Link href="/admin/commandes" className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-800 hover:text-emerald-950">Toutes les commandes <ArrowRight size={15}/></Link>}>
+      <Panel title="Commandes à payer" description="Les dernières commandes en attente de paiement" action={<Link href="/admin/commandes" className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-800 hover:text-emerald-950">Toutes les commandes <ArrowRight size={15}/></Link>}>
         {ordersLoading ? <PanelSkeleton/> : ordersError ? <ErrorPanel error={ordersError} onRetry={retryOrders}/> : pending.length ? <div className="divide-y divide-slate-100">{pending.map((order) => <button key={order.id} onClick={() => onNavigate("/admin/commandes")} className="flex w-full items-center justify-between gap-3 px-5 py-3.5 text-left hover:bg-slate-50 sm:px-6"><div className="min-w-0"><p className="truncate text-sm font-semibold text-slate-900">{order.reference}</p><p className="mt-0.5 truncate text-xs text-slate-500">{order.firstName} {order.lastName} · {shortDate(order.createdAt)}</p></div><div className="shrink-0 text-right"><p className="text-sm font-semibold text-slate-900">{money(order.totalFCFA)}</p><StatusBadge status={order.status}/></div></button>)}</div> : <EmptyPanel icon={CheckCircle2} text="Aucune commande en attente de paiement."/>}
       </Panel>
       <Panel title="Stock à surveiller" description="Produits actifs au niveau ou sous le seuil d’alerte" action={<Link href="/admin/stock?filtre=bas" className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-800 hover:text-emerald-950">Voir le stock <ArrowRight size={15}/></Link>}>
@@ -327,7 +326,7 @@ function OrdersView({ orders, loading, error, simulate, advance, onNavigate }: {
   const visible = filtered.slice((page - 1) * 10, page * 10);
   const updateStatus = (value: string) => { setStatus(value); setPage(1); };
   return <div data-testid="page-admin-orders">
-    <SectionHeading eyebrow="Opérations" title="Commandes" description="Recherchez une commande, suivez son paiement simulé et mettez à jour sa préparation." action={<div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">Paiements en simulation</div>}/>
+    <SectionHeading eyebrow="Opérations" title="Commandes" description="Recherchez une commande, suivez son paiement et mettez à jour sa préparation."/>
     {(simulate.isError || advance.isError) && <p className="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900" role="alert">{((simulate.error || advance.error) as Error).message}</p>}
     <div className="mb-4 grid gap-3 sm:grid-cols-3">
       <button onClick={() => updateStatus("all")} className={`rounded-xl border px-4 py-3 text-left ${status === "all" ? "border-emerald-700 bg-emerald-50" : "border-slate-200 bg-white hover:bg-slate-50"}`}><span className="text-xs font-semibold text-slate-600">Toutes les commandes</span><strong className="mt-1 block text-xl text-slate-950">{orders.length}</strong></button>

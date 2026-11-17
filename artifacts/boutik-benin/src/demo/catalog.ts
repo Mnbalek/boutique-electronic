@@ -190,7 +190,7 @@ export const demoProducts: Product[] = seeds.map((seed, index) => {
     reference: seed.reference,
     name: seed.name,
     shortDescription: seed.description,
-    description: `${seed.description} Les caractéristiques, le prix et le stock de cette fiche sont des données de démonstration.`,
+    description: seed.description,
     priceFCFA: seed.priceFCFA,
     compareAtPriceFCFA: seed.compareAtPriceFCFA ?? null,
     stock: seed.stock,
@@ -201,7 +201,7 @@ export const demoProducts: Product[] = seeds.map((seed, index) => {
     images: [
       {
         url: imageUrl(seed.photoId),
-        alt: `Photo de démonstration : ${seed.name}`,
+        alt: seed.name,
         isPrimary: true,
       },
     ],
